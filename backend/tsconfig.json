@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["node_modules/*"],
+      "src/*": ["src/*"] // Add this line to ensure that paths starting with "src/" are resolved correctly
+    }
+  },
+  "include": ["src/**/*.ts", "process-env.d.ts"],
+  "exclude": ["node_modules"]
+}
