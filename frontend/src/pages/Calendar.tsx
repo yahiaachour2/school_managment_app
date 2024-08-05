@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 
+import { jwtDecode } from 'jwt-decode';
 import moment from 'moment';
 import {
   Calendar,
@@ -23,17 +24,22 @@ import { CalendarEvent } from '../types/calendar';
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
+interface JwtPayload {
+  role: string;
+}
+
 const App: React.FC = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [newEvent, setNewEvent] = useState<CalendarEvent | null>(null);
   const [updateEvent, setUpdateEvent] = useState<CalendarEvent | null>(null);
+  const [role, setRole] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchEvents = async () => {
     try {
-      const response = await axiosInstance.get('/calendaritem/?type=CALENDAR');
+      const response = await axiosInstance.get('/calendaritem/calendar/?type=CALENDAR');
       const events = response.data.map((event: any) => ({
         id: event.calendarItemId,
         title: event.itemName,
@@ -48,10 +54,31 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const parsedToken = jwtDecode<JwtPayload>(token);
+        setRole(parsedToken.role);
+        console.log('====================================');
+        console.log(parsedToken.role);
+        console.log('====================================');
+      } catch (error) {
+        console.error('Invalid token', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     fetchEvents();
   }, []);
 
   const onEventResize = useCallback(async (data: any) => {
+    if (role !== 'ADMIN') {
+      // Notify the user or handle lack of permissions
+      alert('You do not have permission to resize events.');
+      return;
+    }
+  
     const { start, end, event } = data;
     try {
       await axiosInstance.put(`/calendaritem/update/${event.id}`, {
@@ -66,9 +93,15 @@ const App: React.FC = () => {
     } catch (error) {
       console.error('Error updating event', error);
     }
-  }, []);
-
+  }, [role]);
+  
   const onEventDrop = useCallback(async (data: any) => {
+    if (role !== 'ADMIN') {
+      // Notify the user or handle lack of permissions
+      alert('You do not have permission to move events.');
+      return;
+    }
+  
     const { start, end, event } = data;
     try {
       await axiosInstance.put(`/calendaritem/update/${event.id}`, {
@@ -83,47 +116,35 @@ const App: React.FC = () => {
     } catch (error) {
       console.error('Error updating event', error);
     }
-  }, []);
+  }, [role]);
 
   const handleSelectSlot = useCallback(
     ({ start, end }: { start: Date; end: Date }) => {
-      setNewEvent({ start, end, title: '', type: '' });
-      setShowModal(true);
+      if (role === 'ADMIN') {
+        setNewEvent({ start, end, title: '', type: '' });
+        setShowModal(true);
+      }
     },
-    []
+    [role]
   );
 
   const handleEventDoubleClick = useCallback((calEvent: any): void => {
-    setUpdateEvent(calEvent);
-    setShowModalUpdate(true);
-  }, []);
-
-
-
+    if (role === 'ADMIN') {
+      setUpdateEvent(calEvent);
+      setShowModalUpdate(true);
+    }
+  }, [role]);
 
   const handleCloseModal = () => {
     setShowModal(false);
     setNewEvent(null);
     setShowModalUpdate(false);
     setUpdateEvent(null);
-    fetchEvents()
+    fetchEvents();
   };
 
-  // useEffect(() => {
-  //   if (showModal || showModalUpdate) {
-  //     document.addEventListener('mousedown',(event) => handleClickOutside(event, handleCloseModal, modalRef) );
-  //   } else {
-  //     document.removeEventListener('mousedown', (event) => handleClickOutside(event, handleCloseModal, modalRef));
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener('mousedown', (event) => handleClickOutside(event, handleCloseModal, modalRef));
-
-  //   };
-  // }, [showModal, showModalUpdate]);
-
   return (
-    <div className="App">
+    <div className="App w-[95%]">
       <DnDCalendar
         defaultDate={moment().toDate()}
         defaultView="month"
@@ -153,7 +174,6 @@ const App: React.FC = () => {
             <UpdateEvent
               onClose={handleCloseModal}
               event={updateEvent}
-             
             />
           </div>
         </div>

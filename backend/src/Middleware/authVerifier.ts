@@ -14,7 +14,6 @@ export function authenticateToken(req: CustomRequest, res: Response, next: NextF
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  console.log('tokennnnnn1', token);
 
   if (!token) return res.sendStatus(401); // Unauthorized
 

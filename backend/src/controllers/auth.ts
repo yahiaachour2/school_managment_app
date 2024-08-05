@@ -25,12 +25,15 @@ export class AuthController {
       // Generate token
       const token = generateToken({
         userId: user.userId,
+        schoolId:user.schoolId,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-        gender: user.gender
+        gender: user.gender,
+        level:user.levelId
       });
+console.log("user.level?.name",user.level);
 
       // Update user's token in the database
       user.token = token;

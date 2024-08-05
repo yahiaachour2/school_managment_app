@@ -79,7 +79,7 @@ function LevelUpdate() {
     return (
         <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
         <div className="flex justify-center mb-5">
-          <h2 className="text-xl font-bold">Create Student</h2>
+          <h2 className="text-xl font-bold">Update Level</h2>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           <div className="flex items-center col-span-1 justify-center">

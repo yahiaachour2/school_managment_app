@@ -38,7 +38,7 @@ function Ssxsxsx() {
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        const response = await axiosInstance.get(`http://localhost:3000/users/get/${params.userId}`);
+        const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
         setFormData(response.data.users);
       } catch (error) {
         console.error(`Error fetching Student with ID ${params.userId}:`, error);

@@ -20,10 +20,14 @@ import Navbar from './component/Navbar';
 import CreateParent from './component/ParentCreate';
 import ParentShow from './component/ParentShow';
 import ParentUpdate from './component/ParentUpdate';
+import CreateRoom from './component/RoomCreate';
+import UpdateRoom from './component/RoomUpdate';
 import Sidebar from './component/Sidebar';
 import CreateStudent from './component/StudentCreate';
 import StudentShow from './component/StudentShow';
 import StudentUpdate from './component/StudentUpdate';
+import CreateSubject from './component/SubjectCreate';
+import SubjectUpdate from './component/SubjectUpate';
 import CreateTeacher from './component/teacherCreate';
 import UpdateTeacher from './component/teacherUpdate';
 import TeacherShow from './component/TeachrShow';
@@ -32,9 +36,11 @@ import Calendarr from './pages/Calendar';
 import Level from './pages/Level';
 import Note from './pages/Note';
 import Parent from './pages/Parent';
+import Room from './pages/Room';
 import Schedules from './pages/Schedule';
 import Login from './pages/SignIn';
 import Student from './pages/Student';
+import Subject from './pages/Subject';
 import Teacher from './pages/Teacher';
 
 const AppRouter: React.FC = () => {
@@ -45,14 +51,14 @@ const AppRouter: React.FC = () => {
   const shouldDisplayNavbar = !noNavbarRoutes.includes(location.pathname);
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col w-full">
     <PrimeReactProvider value={{ pt: Tailwind }}>
       {shouldDisplayNavbar && <Navbar />}
 
-      <div className="flex">
+      <div className="flex w-full">
         {shouldDisplayNavbar && <Sidebar/>}
-        <div className=' flex justify-center w-full'>
-        <div className="flex-col items-center justify-center !min-w-[100%]">
+        <div className=' flex justify-center w-full h-fit  bg-gray-50'>
+        {/* <div className=" w-full flex-col items-center justify-center"> */}
           <Routes>
             {/* <Route path="/" element={<Ssxsxsx />} /> */}
             <Route path="/students" element={<Student />} />
@@ -90,13 +96,24 @@ const AppRouter: React.FC = () => {
 
             <Route path="/note" element={<Note />} />
 
+            <Route path="/room" element={<Room />} />
+            <Route path="/createroom" element={<CreateRoom />} />
+            <Route path="/updateroom/:roomId" element={<UpdateRoom />} />
+
+
+
+            <Route path="/subject" element={<Subject />} />
+            <Route path="/createsubject" element={<CreateSubject />} />
+            <Route path="/updatesubject/:subjectId" element={<SubjectUpdate />} />
+            
+            
 
 
             
           </Routes>
         
         </div>
-        </div>
+        {/* </div> */}
         
       </div>
       

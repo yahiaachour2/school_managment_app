@@ -9,7 +9,7 @@ export interface Teacher {
   firstName: string;
   email: string;
   password: string;
-  teacherId:string ;
+  userId:string ;
   role: 'TEACHER';
   levelId: string;
   schoolId: string;

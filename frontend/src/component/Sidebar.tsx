@@ -4,6 +4,7 @@ import {
 } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
+import { FaBook } from 'react-icons/fa6';
 import {
   GrSchedules,
   GrUserAdmin,
@@ -22,6 +23,7 @@ import {
 } from 'react-icons/md';
 import { PiStudentBold } from 'react-icons/pi';
 import { RiParentFill } from 'react-icons/ri';
+import { SiGoogleclassroom } from 'react-icons/si';
 import {
   Link,
   useLocation,
@@ -50,27 +52,54 @@ const Sidebar = () => {
     }
   }, []); // Empty dependency array ensures this runs only once when the component mounts
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setOpen(false);
+      } else {
+        setOpen(true);
+      }
+    };
+
+    // Set the initial state based on the current window width
+    handleResize();
+
+    // Add the resize event listener
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const Menus = [
-    { title: "Student", icon: <PiStudentBold />, link: "/students", roles: ['ADMIN'] },
-    { title: "Enseignant", icon: <MdPeopleAlt />, link: "/teacher", roles: ['ADMIN'] },
-    { title: "Parent", icon: <RiParentFill />, link: "/parent", roles: ['ADMIN'] },
-    { title: "Admin", icon: <GrUserAdmin />, link: "/admin", gap: true, roles: ['ADMIN'] },
-    { title: "Inbox", icon: <IoIosNotifications />, link: "/inbox", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
-    { title: "Level", icon: <IoSchoolSharp />, link: "/level", roles: ['ADMIN'] },
-    { title: "Note", icon: <MdOutlineSpeakerNotes />, link: "/note", roles: ['ADMIN', 'TEACHER'] },
-    { title: "Schedule", icon: <GrSchedules />, link: "/schedule", roles: [ 'ADMIN','TEACHER','PARENT','STUDENT'] },
-    { title: "Notifications", icon: <IoIosNotifications />, link: "/notification", gap: true, roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
-    { title: "Calendar", icon: <IoCalendarNumberOutline />, link: "/calendar", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
+    { title: "Student", icon: <PiStudentBold  className='size-7'/>, link: "/students", roles: ['ADMIN'] },
+    { title: "Enseignant", icon: <MdPeopleAlt  className='size-7'/>, link: "/teacher", roles: ['ADMIN'] },
+    { title: "Parent", icon: <RiParentFill  className='size-7'/>, link: "/parent", roles: ['ADMIN'] },
+    { title: "Room", icon: <SiGoogleclassroom  className='size-7'/>, link: "/room", roles: ['ADMIN'] },
+
+    { title: "Admin", icon: <GrUserAdmin  className='size-7'/>, link: "/admin", gap: true, roles: ['ADMIN'] },
+    { title: "Inbox", icon: <IoIosNotifications  className='size-7'/>, link: "/inbox", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
+    { title: "Level", icon: <IoSchoolSharp  className='size-7'/>, link: "/level", roles: ['ADMIN'] },
+    { title: "Subject", icon: <FaBook  className='size-7'/>, link: "/subject", roles: ['ADMIN'] },
+
+    { title: "Note", icon: <MdOutlineSpeakerNotes  className='size-7'/>, link: "/note", roles: ['ADMIN', 'TEACHER'] },
+    { title: "Schedule", icon: <GrSchedules  className='size-7'/>, link: "/schedule", roles: [ 'ADMIN','TEACHER','PARENT','STUDENT'] },
+    { title: "Notifications", icon: <IoIosNotifications  className='size-7'/>, link: "/notification", gap: true, roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
+    { title: "Calendar", icon: <IoCalendarNumberOutline  className='size-7'/>, link: "/calendar", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
   ];
 
   return (
     <div className="flex">
-      <div className={` ${open ? "w-full" : "w-25 "} bg-gray-50 h-screen p-5 relative duration-300`}>
+      <div className={`bg-gray-50 relative p-5 text-white h-screen ease-in-out duration-300 w-28 ${
+        open ? "w-64" : "translate-x-0"
+      }`}>
         <IoIosArrowDropleftCircle
-          className={`absolute cursor-pointer -right-3 top-9 text-blue-500 rounded-full h-10 w-10 ${!open && "-rotate-90"}`}
+          className={`absolute cursor-pointer -right-3 top-8 text-blue-500 rounded-full h-10 w-10 ease-in-out duration-500 ${
+            !open && "-rotate-90"
+          } hover:drop-shadow-2xl hover:shadow-2xl`}
           onClick={() => setOpen(!open)}
         />
-      <ul className="pt-0">
+        <ul className="pt-0">
           {Menus.map((Menu, index) => (
             Menu.roles.includes(role) && (
               <li
@@ -80,7 +109,7 @@ const Sidebar = () => {
               >
                 <Link to={Menu.link} className="flex items-center gap-x-4">
                   {Menu.icon}
-                  <span className={`${!open && "hidden"} origin-left duration-200`}>
+                  <span className={`${open ? "inline" : "hidden"} origin-left ease-in-out duration-300`}>
                     {Menu.title}
                   </span>
                 </Link>

@@ -1,10 +1,6 @@
 import { Room } from '../entities/room';
+import { InvalidUuidError } from '../errors';
 import {
-  BadParametersError,
-  InvalidUuidError,
-} from '../errors';
-import {
-  InvalidStatusError,
   RoomAlreadyExistError,
   RoomNotFoundError,
 } from '../errors/RoomError';
@@ -14,7 +10,6 @@ import {
   CreateRoomInput,
   deleteRoomInput,
   GetRoomInput,
-  RoomStatus,
   updateRoomInput,
 } from '../types/room';
 
@@ -41,19 +36,19 @@ export class RoomService {
 
   async create(input: CreateRoomInput) {
     try {
-      const { name, status, number, schoolId } = input;
+      const { name, schoolId } = input;
 
-      if (!name || !status || !number) {
-        throw new BadParametersError(["name", "status", "number"]);
-      }
+      // if (!name ) {
+      //   throw new BadParametersError(["name"]);
+      // }
 
-      if (!Object.values(RoomStatus).includes(status)) {
-        throw new InvalidStatusError();
-      }
+      // if (!Object.values(RoomStatus).includes(status)) {
+      //   throw new InvalidStatusError();
+      // }
 
       const roomSource = await dataSource.getRepository(Room).findOne({
         where: {
-          number,
+          name,
           school: { schoolId },
         },
       });
@@ -63,7 +58,7 @@ export class RoomService {
       }
 
       const room = Object.assign(new Room(), {
-        ...{ name, status, number, schoolId },
+        ...{ name,  schoolId },
         school: { schoolId },
 
       } as Room);
@@ -115,10 +110,10 @@ export class RoomService {
     return rooms;
   }
   async update(input: updateRoomInput) {
-    const { id: roomId } = input;
+    const { roomId } = input;
     const { name, status, number, schoolId } = input;
     try {
-      console.log(roomId);
+      console.log("zdada",  roomId);
 
       if (!uuidValidate(roomId)) {
         throw new InvalidUuidError();

@@ -176,7 +176,7 @@ export class UserService {
     //  .leftJoinAndSelect("user.schedule", "schedule")
      .leftJoinAndSelect("user.children", "children")
       .skip((page - 1) * limit)
-      .take(5);
+      .take(10);
 
       // where schoolId
 

@@ -33,7 +33,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
     roomId: '',
     levelId: '',
     subjectId: '',
-    userId: '32096a76-4798-44d4-b840-11107c6983c4',
+    userId: '',
     assignedFor: '',
     type: "SCHEDULE"
   });
@@ -41,22 +41,29 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
   useEffect(() => {
     const fetchLevels = async () => {
       try {
+        console.log('start', start.toISOString());
         const [levelsResponse, subjectsResponse, roomsResponse,teacherResponse] = await Promise.all([
           axiosInstance.get('http://localhost:3000/level'),
           axiosInstance.get('http://localhost:3000/subject'),
-          axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=TEACHER'),
-
-          axiosInstance.get('http://localhost:3000/room'),{
+          axiosInstance.get('http://localhost:3000/room/available', {
             params: {
               timeStart: start.toISOString(),
               timeEnd: end.toISOString(),
-            }}
+            },
+          }),
+          axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=TEACHER'),
+
+          
+       
+          
         ]);
         setTeacher(teacherResponse.data);
 
         setLevels(levelsResponse.data);
         setSubjects(subjectsResponse.data);
         setRooms(roomsResponse.data);
+     
+        
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
       }
@@ -212,6 +219,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               minDate={start}
               dateFormat="MM/dd/yyyy h:mm aa"
               showTimeInput
+              
               className="border-solid border-2 border-black-600 w-44"
             />
           </div>
@@ -242,23 +250,13 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
             />
           </div>
+     
           <div className="col-span-1">
             <label htmlFor="assignedFor" className="block mb-2 text-sm font-medium text-gray-900">
-              Assigned For:
+              Teacher:
             </label>
             <Select
-              options={options}
-              onChange={handleSelectChange('assignedFor')}
-              styles={customStyles}
-              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
-            />
-          </div>
-          <div className="col-span-1">
-            <label htmlFor="assignedFor" className="block mb-2 text-sm font-medium text-gray-900">
-              Assignssssssssssed For:
-            </label>
-            <Select
-          options={teacher.map((user) => ({ value: user.teacherId, label: `${user.firstName} ${user.lastName}`}))}
+          options={teacher.map((user) => ({ value: user.userId, label: `${user.firstName} ${user.lastName}`}))}
           onChange={handleSelectChange('userId')}
           onInputChange={handleSearch}
           isSearchable={true}

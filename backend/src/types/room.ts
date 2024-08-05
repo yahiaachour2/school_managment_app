@@ -21,7 +21,7 @@ export interface GetRoomInput {
 }
 
 export interface updateRoomInput {
-    id: string;
+    roomId: string;
     name: string;
     status: RoomStatus;
     number: string;

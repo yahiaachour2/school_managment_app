@@ -39,9 +39,9 @@ export default function Student() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async (role?: string) => {
-    
+
     try {
-      
+
       let url = `${import.meta.env.VITE_API_URL}/users?page=${page}&limit=${limit}`;
       if (role) {
         url += `&role=${role.trim()}`;
@@ -124,7 +124,7 @@ export default function Student() {
   };
 
   return (
-    <div className="card rounded-md m-6">
+    <div className="card rounded-lg m-6">
       <Toast ref={toast} />
       <ConfirmDialog />
       <div className='flex justify-between pr-10'>
@@ -135,13 +135,13 @@ export default function Student() {
           <Button label="Add Student" className="m-3 p-button-success" />
         </Link>
       </div>
-      <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName=""  >
+      <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName="" breakpoint='250px'  >
         <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
         <Column field="lastName" header="Last Name"></Column>
         <Column field="firstName" header="First Name"></Column>
         <Column field="email" header="E-mail"></Column>
         <Column field="parent" header="Parent" body={(data) => data.parent ? `${data.parent.firstName} ${data.parent.lastName}` : 'N/A'}></Column>
-        <Column field="level" header="Level" body={(data) => data.level ? data.level.name  : 'N/A'}></Column>
+        <Column field="level" header="Level" body={(data) => data.level ? data.level.name : 'N/A'}></Column>
         <Column field="gender" header="Gender"></Column>
         {/* <Column field="schedule" header="schedule"body={(data) => data.schedule ? data.schedule.scheduleId  : 'N/A'}></Column> */}
 

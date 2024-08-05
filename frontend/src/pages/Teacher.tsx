@@ -139,8 +139,7 @@ export default function Teacher() {
         <Column field="lastName" header="Last Name"></Column>
         <Column field="firstName" header="First Name"></Column>
         <Column field="email" header="E-mail"></Column>
-        {/* <Column field="parent" header="Parent" body={(data) => data.parent ? `${data.parent.firstName} ${data.parent.lastName}` : 'N/A'}></Column> */}
-        {/* <Column field="level" header="Level" body={(data) => data.level ? data.level.name  : 'N/A'}></Column> */}
+      
         <Column field="gender" header="Gender"></Column>
         <Column field="schedule" header="schedule"body={(data) => data.schedule ? data.schedule.scheduleName  : 'N/A'}></Column>
 

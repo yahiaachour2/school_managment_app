@@ -13,6 +13,6 @@ routes.put("/update/:id",authenticateToken, roomController.update);
 routes.delete("/delete/:id",authenticateToken, roomController.delete);
 
 
-routes.get('/available', roomController.getAvailableRooms);
+routes.get('/available',authenticateToken, roomController.getAvailableRooms);
 
 export default routes;

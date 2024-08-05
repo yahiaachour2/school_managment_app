@@ -16,6 +16,7 @@ import { UserGenders } from '../types/userGendre';
 import { UserRoles } from '../types/userRoles';
 import { BaseEntity } from './baseEntity';
 import Calendar from './calendar';
+import { CalendarItems } from './calendarItems';
 import { Level } from './level';
 import { School } from './school';
 
@@ -91,8 +92,8 @@ export class User extends BaseEntity {
   // students!: Student[];
 
   
-// @OneToMany(() => CalendarItems, calendarItems => calendarItems.user)
-// calendarItems!: CalendarItems[];
+@OneToMany(() => CalendarItems, calendarItems => calendarItems.teacher)
+calendarItems!: CalendarItems[];
 
   // @Index()
   // @ManyToOne(() => Calendar, { nullable: true })

@@ -38,7 +38,7 @@ export class RoomController {
   // };
   async getAvailableRooms(req: Request, res: Response) {
     try {
-      const { timeStart, timeEnd } = req.body;
+      const { timeStart, timeEnd } = req.query;
   
       if (!timeStart || !timeEnd) {
         return res.status(400).json({ message: 'Missing timeStart or timeEnd parameter' });

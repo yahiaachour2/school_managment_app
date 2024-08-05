@@ -12,3 +12,26 @@
   @tailwind components;
   @tailwind utilities;
 }
+
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  background-color: rgb(249 250 251) !important;
+}
+
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px !important;
+  width: 100% !important;
+}
+
+.p-dropdown {
+  width: fit-content !important;
+}
+
