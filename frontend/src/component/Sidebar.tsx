@@ -77,14 +77,17 @@ const Sidebar = () => {
     { title: "Parent", icon: <RiParentFill  className='size-7'/>, link: "/parent", roles: ['ADMIN'] },
     { title: "Room", icon: <SiGoogleclassroom  className='size-7'/>, link: "/room", roles: ['ADMIN'] },
 
-    { title: "Admin", icon: <GrUserAdmin  className='size-7'/>, link: "/admin", gap: true, roles: ['ADMIN'] },
+    { title: "Admin", icon: <GrUserAdmin  className='size-7'/>, link: "/admin", roles: ['ADMIN'] },
+    
+    { title: "Room", icon: <SiGoogleclassroom  className='size-7'/>, link: "/room",  gap: true, roles: ['ADMIN'] },
+
     { title: "Inbox", icon: <IoIosNotifications  className='size-7'/>, link: "/inbox", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
     { title: "Level", icon: <IoSchoolSharp  className='size-7'/>, link: "/level", roles: ['ADMIN'] },
     { title: "Subject", icon: <FaBook  className='size-7'/>, link: "/subject", roles: ['ADMIN'] },
 
     { title: "Note", icon: <MdOutlineSpeakerNotes  className='size-7'/>, link: "/note", roles: ['ADMIN', 'TEACHER'] },
-    { title: "Schedule", icon: <GrSchedules  className='size-7'/>, link: "/schedule", roles: [ 'ADMIN','TEACHER','PARENT','STUDENT'] },
-    { title: "Notifications", icon: <IoIosNotifications  className='size-7'/>, link: "/notification", gap: true, roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
+    
+    { title: "Schedule", icon: <GrSchedules  className='size-7'/>, link: "/schedule", gap: true, roles: [ 'ADMIN','TEACHER','PARENT','STUDENT'] },
     { title: "Calendar", icon: <IoCalendarNumberOutline  className='size-7'/>, link: "/calendar", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },
   ];
 

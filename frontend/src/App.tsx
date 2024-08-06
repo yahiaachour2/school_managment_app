@@ -31,6 +31,7 @@ import SubjectUpdate from './component/SubjectUpate';
 import CreateTeacher from './component/teacherCreate';
 import UpdateTeacher from './component/teacherUpdate';
 import TeacherShow from './component/TeachrShow';
+import { ScheduleForLevel } from './component/VoirScheduleLevel';
 import Admin from './pages/admin';
 import Calendarr from './pages/Calendar';
 import Level from './pages/Level';
@@ -88,6 +89,7 @@ const AppRouter: React.FC = () => {
             <Route path="/createlevel" element={<CreateLevel />} />
             <Route path="/level/:levelId" element={<LisreVoirStudentt />} />
             <Route path="/updatelevel/:levelId" element={<LevelUpdate />} />
+            <Route path="/schedule/level/:levelId" element={<ScheduleForLevel />} />
 
             <Route path="/calendar" element={<Calendarr />} />
 

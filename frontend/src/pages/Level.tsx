@@ -123,15 +123,16 @@ export default function Level() {
       </React.Fragment>
     );
   };
-  const linkVoirSchedule = (rowData:any) => {
+  const linkVoirSchedule = (rowData: any) => {
     return (
       <React.Fragment>
-        <Link className='flex items-center space-x-2 hover:text-blue-500 hover:underline ' to={`/level/${rowData.levelId}`}>
-          <h1 className=''>Voir Schedule</h1> 
+        <Link
+          className='flex items-center space-x-2 hover:text-blue-500 hover:underline'
+          to={`/schedule/level/${rowData.levelId}`}
+        >
+          <h1 className=''>Voir Schedule</h1>
           <FaExternalLinkAlt />
-          </Link>
-         
-
+        </Link>
       </React.Fragment>
     );
   };

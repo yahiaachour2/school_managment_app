@@ -5,6 +5,7 @@ import React, {
   useState,
 } from 'react';
 
+import { jwtDecode } from 'jwt-decode';
 import moment from 'moment';
 import {
   Calendar,
@@ -27,12 +28,18 @@ import { Teacher } from '../types/teacher';
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
+interface JwtPayload {
+  level: string;
+  role: string;
+}
+
 const Schedules: React.FC = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [newEvent, setNewEvent] = useState<CalendarEvent | null>(null);
   const [updateEvent, setUpdateEvent] = useState<CalendarEvent | null>(null);
+  const [role, setRole] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState(Views.WEEK);
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -41,6 +48,20 @@ const Schedules: React.FC = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedLevelId, setSelectedLevelId] = useState<string | null>(null);
+
+  // Fetch user role
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const parsedToken = jwtDecode<JwtPayload>(token);
+        setRole(parsedToken.role);
+        console.log('Role:', parsedToken.role);
+      } catch (error) {
+        console.error('Invalid token', error);
+      }
+    }
+  }, []);
 
   // Fetch events
   const fetchEvents = async () => {
@@ -56,12 +77,11 @@ const Schedules: React.FC = () => {
       const events = response.data.map((event: any) => ({
         id: event.calendarItemId,
         title: (
-          <div className='flex flex-col justify-center  items-start mt-0 h-full'>
+          <div className='flex flex-col justify-center items-start mt-0 h-full'>
             <div>{event.subject?.name}</div>
             <div>{event.teacher?.firstName} {event.teacher?.lastName}</div>
             <div>{event.room?.name}</div>
             <div>{event.level?.name}</div>
-            
           </div>
         ),
         start: new Date(event.timeStart),
@@ -106,6 +126,11 @@ const Schedules: React.FC = () => {
   }, [selectedUserId]);
 
   const onEventResize = useCallback(async (data: any) => {
+    if (role !== 'ADMIN') {
+      alert('You do not have permission to resize events.');
+      return;
+    }
+
     const { start, end, event } = data;
     try {
       await axiosInstance.put(`/calendaritem/update/${event.id}`, {
@@ -118,9 +143,14 @@ const Schedules: React.FC = () => {
     } catch (error) {
       console.error('Error updating event', error);
     }
-  }, []);
+  }, [role]);
 
   const onEventDrop = useCallback(async (data: any) => {
+    if (role !== 'ADMIN') {
+      alert('You do not have permission to move events.');
+      return;
+    }
+
     const { start, end, event } = data;
     try {
       await axiosInstance.put(`/calendaritem/update/${event.id}`, {
@@ -133,20 +163,28 @@ const Schedules: React.FC = () => {
     } catch (error) {
       console.error('Error updating event', error);
     }
-  }, []);
+  }, [role]);
 
   const handleSelectSlot = useCallback(
     ({ start, end }: { start: Date; end: Date }) => {
-      setNewEvent({ start, end, title: '', type: '' });
-      setShowModal(true);
+      if (role === 'ADMIN') {
+        setNewEvent({ start, end, title: '', type: '' });
+        setShowModal(true);
+      } else {
+        alert('You do not have permission to create new events.');
+      }
     },
-    []
+    [role]
   );
 
   const handleEventDoubleClick = useCallback((calEvent: any): void => {
-    setUpdateEvent(calEvent);
-    setShowModalUpdate(true);
-  }, []);
+    if (role === 'ADMIN') {
+      setUpdateEvent(calEvent);
+      setShowModalUpdate(true);
+    } else {
+      alert('You do not have permission to update events.');
+    }
+  }, [role]);
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -197,6 +235,8 @@ const Schedules: React.FC = () => {
 
   return (
     <div className="Schedules w-[95%]">
+          {role === 'ADMIN' && (
+
       <div className='flex m-4 justify-evenly space-x-10'>
         <div className='w-1/2'>
           <div>
@@ -227,8 +267,9 @@ const Schedules: React.FC = () => {
             value={getLevelOption(selectedLevelId)}
           />
         </div>
+        
       </div>
-
+)}
       <DnDCalendar
         components={{
           toolbar: () => null,

@@ -8,6 +8,11 @@ import { checkPassword } from '../helpers/hashPassword';
 import { generateToken } from '../helpers/jsonwebtoken';
 import { dataSource } from '../ormconfig';
 
+interface JwtPayload {
+  level:string;
+  role: string;
+}
+
 export class AuthController {
   async login(req: Request, res: Response) {
     try {
@@ -16,7 +21,7 @@ export class AuthController {
         return res.status(400).json({ message: "Email and password are required" });
       }
       const userRepository = dataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { email } });
+      const user = await userRepository.findOne({ where: { email }, relations: ['level'] });
 
       if (!user || !checkPassword(password, user.password)) {
         return res.status(401).json({ message: "Invalid email or password" });
@@ -31,9 +36,8 @@ export class AuthController {
         lastName: user.lastName,
         role: user.role,
         gender: user.gender,
-        level:user.levelId
+        level:user.level?.name
       });
-console.log("user.level?.name",user.level);
 
       // Update user's token in the database
       user.token = token;

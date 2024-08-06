@@ -25,6 +25,7 @@ const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 interface JwtPayload {
+  level:string;
   role: string;
 }
 

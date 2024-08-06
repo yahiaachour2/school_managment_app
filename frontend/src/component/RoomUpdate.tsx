@@ -25,6 +25,7 @@ function RoomUpdate() {
       const [formData, setFormData] = useState<Room>({
           schoolId:'',
     name:'',
+    roomId:';'
       });
     
       const [error, setError] = useState('');
@@ -33,7 +34,6 @@ function RoomUpdate() {
       const navigate = useNavigate();
       const params = useParams<{ roomId: string }>();
     
-      console.log("formData", formData);
     
       useEffect(() => {
         const fetchDocument = async () => {
