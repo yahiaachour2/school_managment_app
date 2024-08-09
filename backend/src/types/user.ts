@@ -9,7 +9,7 @@ export interface CreateUserInput {
   schoolId: string;
   scheduleId: string;
   parentId :string ;
-  name: string ;
+  levelId: string ;
   gender:UserGenders;
   phone:number;
   

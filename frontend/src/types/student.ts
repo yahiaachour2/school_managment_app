@@ -4,12 +4,13 @@ export interface Level {
 }
 
 export interface Parent {
-  parentId: string;
+  userId: string;
   firstName: string;
   lastName: string;
 }
 
 export interface Student {
+  userId: string;
   lastName: string;
   firstName: string;
   email: string;

@@ -3,15 +3,16 @@ import { EventType } from './eventType';
 import { CalendarType } from './itemType';
 
 export interface CreateCalendarItemInput {
-  calendarId: string;
-  itemName: string;
-  timeStart: Date;
-  timeEnd: Date;
+  itemName?: string;
+  timeStart: string;
+  timeEnd: string;
+  description?: string;
   eventType: EventType;
-  description: string;
-  type: CalendarType
+  type: CalendarType;
+  userId: string;         // This is for the teacher
+  subjectId: string;
+  studentId?: string;     // Optional, for absences
 }
-
 export interface CreateScheduleItemInput {
   calendarId: string;
   itemName: string;

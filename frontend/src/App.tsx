@@ -22,6 +22,8 @@ import ParentShow from './component/ParentShow';
 import ParentUpdate from './component/ParentUpdate';
 import CreateRoom from './component/RoomCreate';
 import UpdateRoom from './component/RoomUpdate';
+import { ScheduleForStudent } from './component/ScheduleForStudent';
+import { ScheduleForTeacher } from './component/ScheduleForTeacher';
 import Sidebar from './component/Sidebar';
 import CreateStudent from './component/StudentCreate';
 import StudentShow from './component/StudentShow';
@@ -66,6 +68,7 @@ const AppRouter: React.FC = () => {
             <Route path="/createstudent" element={<CreateStudent />} />
             <Route path="/updateUser/:userId" element={<StudentUpdate />} />
             <Route path="/showUser/:userId" element={<StudentShow />} />
+            <Route path="/schedule/student/:userId" element={<ScheduleForStudent />} />
 
 
             <Route path="/login" element={<Login />} />
@@ -74,6 +77,7 @@ const AppRouter: React.FC = () => {
             <Route path="/createteacher" element={<CreateTeacher />} />
             <Route path="/updateteacher/:userId" element={<UpdateTeacher />} />
             <Route path="/showteacher/:userId" element={<TeacherShow />} />
+            <Route path="/schedule/teacher/:userId" element={<ScheduleForTeacher />} /> {/* Add the route for teachers */}
 
             <Route path="/parent" element={<Parent />} />
             <Route path="/createparent" element={<CreateParent />} />

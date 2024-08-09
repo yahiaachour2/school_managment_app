@@ -35,7 +35,6 @@ export class LevelService {
         throw new LevelAlreadyExistError();
       }
 
-      console.log('input', input);
       
 
       
@@ -46,11 +45,9 @@ export class LevelService {
 
       });
 
-      console.log('level before', level);
       
       await dataSource.getRepository(Level).save(level);
 
-      console.log('level after', level);
 
       const newLevel = await dataSource.getRepository(Level).findOne({
         where: { levelId: level.levelId },

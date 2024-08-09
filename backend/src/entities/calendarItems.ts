@@ -66,6 +66,9 @@ export class CalendarItems extends BaseEntity {
   teacher!: User;
   // @OneToMany(() => Level, level => level.calendarItems)
   // levels!: Level[];
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: "userId" })
+  student!: User;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -79,7 +79,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-50 border-gray-200 dark:bg-gray-900 z-30">
+    <nav className="bg-gray-100 border-gray-200 dark:bg-gray-900 z-30">
       <div className="w-full flex flex-wrap items-center justify-between mx-auto px-2 p-4 pb-0">
         <a href="http://localhost:5173/users/student" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/img/SmartSchool-logo.png" alt="Smart School" className="w-40 pl-5" />
@@ -87,12 +87,14 @@ function Navbar() {
         <div className="flex items-center space-x-7">
           <Dropdown
             trigger={
-              <button id="dropdownNotificationButton" className="relative pt-4 inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400">
+              <div className='flex items-end pt-3'>
+                <button id="dropdownNotificationButton" className="relative  inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400">
                 <svg className="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 20">
                   <path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"/>
                 </svg>
-                {/* <div className="absolute block w-3 h-3  bg-red-500 border-2 border-white rounded-full -top-0.5 start-2.5 dark:border-gray-900"></div> */}
+                <div className="absolute block w-3 h-3  bg-red-500 border-2 border-white rounded-full -top-0.5 start-2.5 dark:border-gray-900"></div>
               </button>
+              </div>
             }
           >
            <DropdownItem>
@@ -164,8 +166,8 @@ function Navbar() {
 
           <Dropdown
             trigger={
-              <button className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                <img className="w-12 h-13 rounded-full" src={userPhoto} alt="User Photo" />
+              <button className="flex items-center text-sm font-medium text-gray-500   hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                <img className="w-16 h-16 rounded-full" src={userPhoto} alt="User Photo" />
                 <span className="sr-only">Open user menu</span>
               </button>
             }

@@ -88,6 +88,8 @@ const Schedules: React.FC = () => {
         end: new Date(event.timeEnd),
         type: event.type,
       }));
+      console.log("eventsscedule",events);
+      
       setEvents(events);
     } catch (error) {
       console.error('Error fetching events', error);

@@ -94,6 +94,9 @@ export class User extends BaseEntity {
   
 @OneToMany(() => CalendarItems, calendarItems => calendarItems.teacher)
 calendarItems!: CalendarItems[];
+  
+@OneToMany(() => CalendarItems, calendarItems => calendarItems.student)
+calendarItem!: CalendarItems[];
 
   // @Index()
   // @ManyToOne(() => Calendar, { nullable: true })

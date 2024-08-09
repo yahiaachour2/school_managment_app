@@ -35,7 +35,7 @@ export class UserService {
         email,
         password,
         role,
-        name,
+        levelId,
         schoolId,
         scheduleId,
         parentId,
@@ -92,11 +92,11 @@ export class UserService {
       }
       // Create or fetch the Level entity
       let level = await dataSource.getRepository(Level).findOne({
-        where: { name },
+        where: { levelId },
       });
       if (!level) {
         level = new Level();
-        level.name = name;
+        
         level = await dataSource.getRepository(Level).save(level);
       }
       let children = null;
@@ -130,7 +130,7 @@ export class UserService {
 
       users = await sessionRepository.findOne({
         where: { userId: id },
-        relations: ["parent", "level", "children","schedule"],
+        relations: ["parent", "level", "children"],
       });
 
       if (!users) {

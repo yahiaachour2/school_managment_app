@@ -6,6 +6,8 @@ import {
 import { calendarItemService } from '../services/calendarItem';
 
 export class CalendarItemController {
+//calendar
+
       async create(req: Request, res: Response) {
         try {
           const calendarItem = await calendarItemService.create(req.body);
@@ -14,6 +16,25 @@ export class CalendarItemController {
           return res.status(error?.httpStatusCode || 500).send(error);
         }
       }
+//secedule
+
+      async getScheduleItem(req: Request, res: Response) {
+        try {
+          const page = parseInt(req.query.page as string) || 1;
+          const limit = parseInt(req.query.limit as string) || 20;
+          const searchType = req.query.type as string;
+          const userId = req.query.userId as string;
+          const levelId = req.query.levelId as string;
+      
+          const calendarsItem = await calendarItemService.getScheduleItem(page, limit, searchType,userId,levelId);
+      
+          return res.status(200).json(calendarsItem);
+        } catch (error: any) {
+          return res.status(error?.httpStatusCode || 500).send(error);
+        }
+      }
+//secedule
+
       async createScheduleItem(req: Request, res: Response) {
         try {
           const scheduleItem = await calendarItemService.createScheduleItem(req.body);
@@ -22,41 +43,27 @@ export class CalendarItemController {
           return res.status(error?.httpStatusCode || 500).send(error);
         }
       }
-      async getCalendarsItemsSchdule(req: Request, res: Response) {
-        try {
-          const page = parseInt(req.query.page as string) || 1;
-          const limit = parseInt(req.query.limit as string) || 20;
-          const searchType = req.query.type as string;
+      //calendar
 
-          const calendars = await calendarItemService.getCalendarsItemsSchdule(page, limit,searchType);
-    
-          return res.status(200).json(calendars);
-        } catch (error: any) {
-          return res.status(error?.httpStatusCode || 500).send(error);
-        }
-      }
-    
-      async get(req: Request, res: Response) {
-        try {
-          const { id } = req.params;
-          const calendarItem = await calendarItemService.get({ id });
-          return res.status(200).json(calendarItem);
-        } catch (error: any) {
-          return res.status(error?.httpStatusCode || 500).send(error);
-        }
-      }
-  
-      async getCalendarsItem(req: Request, res: Response) {
+      async getCalendarsItems(req: Request, res: Response) {
         try {
           const page = parseInt(req.query.page as string) || 1;
           const limit = parseInt(req.query.limit as string) || 20;
           const searchType = req.query.type as string;
           const userId = req.query.userId as string;
-          const levelId = req.query.levelId as string;
       
-          const calendarsItem = await calendarItemService.getCalendarsItem(page, limit, searchType,userId,levelId);
+          const calendars = await calendarItemService.getCalendarsItems(page, limit, searchType, userId);
       
-          return res.status(200).json(calendarsItem);
+          return res.status(200).json(calendars);
+        } catch (error: any) {
+          return res.status(error?.httpStatusCode || 500).send(error);
+        }
+      }
+      async get(req: Request, res: Response) {
+        try {
+          const { id } = req.params;
+          const calendarItem = await calendarItemService.get({ id });
+          return res.status(200).json(calendarItem);
         } catch (error: any) {
           return res.status(error?.httpStatusCode || 500).send(error);
         }

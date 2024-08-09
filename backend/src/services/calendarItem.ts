@@ -24,64 +24,111 @@ import {
 } from '../types/calendarItem';
 
 export class CalendarItemService {
-  async create(input: CreateCalendarItemInput) {
+//calendaar
+async create(input: CreateCalendarItemInput) {
+  try {
+    const { itemName, timeStart, timeEnd, description, eventType, type, userId, subjectId, studentId } = input;
+
+    if (!timeStart || !timeEnd || !eventType || !type) {
+      throw new BadParametersError(["timeStart", "timeEnd", "eventType", "type"]);
+    }
+
+    // Prepare calendar item
+    const calendarItem = Object.assign(new CalendarItems(), {
+      itemName,
+      timeStart,
+      timeEnd,
+      description,
+      eventType,
+      type,
+      subject: { subjectId } as Subject,
+      teacher: { userId } as User,
+      student: studentId ? { userId: studentId } as User : undefined  // Handle studentId if provided
+    });
+
+    const newCalendarItem = await dataSource.getRepository(CalendarItems).save(calendarItem);
+
+    return newCalendarItem;
+  } catch (error: any) {
+    console.error('Error creating calendar item:', error);
+    throw error;
+  }
+}
+  //schedule
+  async getScheduleItem(page: number, limit: number, searchType?: string, userId?: string, levelId?: string) {
     try {
-      const { itemName, timeStart, timeEnd, description, eventType, type } =
-        input;
+      const calendarItemRepository = dataSource.getRepository(CalendarItems);
+  
+     
 
-      if (!itemName || !timeStart || !timeEnd || !eventType || !type) {
-        throw new BadParametersError([
-          "itemName",
-          "timeStart",
-          "timeEnd",
-          "description",
-          "type",
-        ]);
+
+    if (!userId && !levelId) {
+      return [];
+    }
+
+      const query = calendarItemRepository
+        .createQueryBuilder("calendarItem")
+        .leftJoinAndSelect("calendarItem.subject", "subject")
+        .leftJoinAndSelect("calendarItem.teacher", "teacher")
+        .leftJoinAndSelect("calendarItem.level", "level")
+        .leftJoinAndSelect("calendarItem.room", "room")
+
+
+
+        .skip((page - 1) * limit)
+        .take(limit);
+  
+      if (searchType) {
+        query.andWhere("calendarItem.type = :type", { type: searchType.trim() });
       }
-
-      //   const calendarItemSource = await dataSource.getRepository(CalendarItems).findOne({
-      //     where: {  itemName  },
-      //   });
-      //   if (calendarItemSource) {
-      //     throw new CalendarAlreadyExistError();
-      //   }
-
-      const calendarItem = Object.assign(new CalendarItems(), {
-        ...{ itemName, timeStart, timeEnd, description, eventType, type },
-      });
-
-      const newCalendarItem = await dataSource
-        .getRepository(CalendarItems)
-        .save(calendarItem);
-
-      return newCalendarItem;
-    } catch (error: any) {
+      if (levelId) {
+        query.andWhere("calendarItem.levelId = :levelId", { levelId });
+      }
+  
+      if (userId) {
+        query.andWhere("calendarItem.teacher.userId = :userId", { userId });
+      }
+  
+      
+  
+      const calendarItems = await query.getMany();
+  
+      return calendarItems;
+    } catch (error) {
       throw error;
     }
   }
-  async getCalendarsItemsSchdule(page: number, limit: number,searchType?: string) {
-    try {
-      const calendarRepository = await dataSource.getRepository(CalendarItems);
 
-      const query = calendarRepository
+//calendar
+async getCalendarsItems(page: number, limit: number, searchType?: string, userId?: string) {
+  try {
+    const calendarRepository = await dataSource.getRepository(CalendarItems);
+
+    const query = calendarRepository
       .createQueryBuilder("calendarItem")
-    
-
-
+      .leftJoinAndSelect("calendarItem.subject", "subject")
+      .leftJoinAndSelect("calendarItem.student", "student")
       .skip((page - 1) * limit)
       .take(limit);
 
     if (searchType) {
       query.andWhere("calendarItem.type = :type", { type: searchType.trim() });
     }
-      const calendars = await query.getMany();
 
-      return calendars;
-    } catch (error) {
-      throw error;
+    if (userId) {
+      query.andWhere("student.userId = :userId", { userId });
     }
+
+    const calendars = await query.getMany();
+
+    return calendars;
+  } catch (error) {
+    throw error;
   }
+}
+
   
+//secedule
 
   async createScheduleItem(input: CreateScheduleItemInput) {
     try {
@@ -166,49 +213,7 @@ export class CalendarItemService {
     }
   }
 
-  async getCalendarsItem(page: number, limit: number, searchType?: string, userId?: string, levelId?: string) {
-    try {
-      const calendarItemRepository = dataSource.getRepository(CalendarItems);
-  
-     
-
-
-    if (!userId && !levelId) {
-      return [];
-    }
-
-      const query = calendarItemRepository
-        .createQueryBuilder("calendarItem")
-        .leftJoinAndSelect("calendarItem.subject", "subject")
-        .leftJoinAndSelect("calendarItem.teacher", "teacher")
-        .leftJoinAndSelect("calendarItem.level", "level")
-        .leftJoinAndSelect("calendarItem.room", "room")
-
-
-        .skip((page - 1) * limit)
-        .take(limit);
-  
-      if (searchType) {
-        query.andWhere("calendarItem.type = :type", { type: searchType.trim() });
-      }
-      if (levelId) {
-        query.andWhere("calendarItem.levelId = :levelId", { levelId });
-      }
-  
-      if (userId) {
-        query.andWhere("calendarItem.teacher.userId = :userId", { userId });
-      }
-  
-      
-  
-      const calendarItems = await query.getMany();
-  
-      return calendarItems;
-    } catch (error) {
-      throw error;
-    }
-  }
-
+ 
   async update(input: updateCalendarItemInput) {
     const {
       calendarItemId,
@@ -217,6 +222,7 @@ export class CalendarItemService {
       timeEnd,
       description,
       eventType,
+      
     } = input;
 
     try {

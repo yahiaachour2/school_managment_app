@@ -25,7 +25,7 @@ const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 interface JwtPayload {
-  level:string;
+  level: string;
   role: string;
 }
 
@@ -43,11 +43,22 @@ const App: React.FC = () => {
       const response = await axiosInstance.get('/calendaritem/calendar/?type=CALENDAR');
       const events = response.data.map((event: any) => ({
         id: event.calendarItemId,
-        title: event.itemName,
+        title: (
+          <div className='flex flex-col justify-center items-start mt-0 h-full'>
+                        <div>{event.subject?.name}</div>
+
+            <div>{event.itemName}</div>
+            <div>{event.student?.firstName} {event.student?.lastName}</div>
+            <div>{event.subejct?.name}</div>
+          </div>
+        ),
         start: new Date(event.timeStart),
         end: new Date(event.timeEnd),
         type: event.type,
+        eventType:event.eventType
       }));
+      console.log("events",events);
+      
       setEvents(events);
     } catch (error) {
       console.error('Error fetching events', error);
@@ -60,9 +71,6 @@ const App: React.FC = () => {
       try {
         const parsedToken = jwtDecode<JwtPayload>(token);
         setRole(parsedToken.role);
-        console.log('====================================');
-        console.log(parsedToken.role);
-        console.log('====================================');
       } catch (error) {
         console.error('Invalid token', error);
       }
@@ -143,6 +151,19 @@ const App: React.FC = () => {
     setUpdateEvent(null);
     fetchEvents();
   };
+  const eventStyleGetter = (event: any) => {
+    const backgroundColor = event.eventType === 'ABSENCE' ? 'rgb(246,0,0)' : '  rgb(61,133,198)';
+    const style = {
+        backgroundColor,
+        borderRadius: '5px',
+        opacity: 0.8,
+        color: 'white',
+        border: 'none',
+    };
+    return {
+        style,
+    };
+};
 
   return (
     <div className="App w-[95%]">
@@ -158,6 +179,7 @@ const App: React.FC = () => {
         onDoubleClickEvent={handleEventDoubleClick}
         onSelectSlot={handleSelectSlot}
         style={{ height: '100vh' }}
+        eventPropGetter={eventStyleGetter}
       />
       {showModal && newEvent && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">

@@ -2,19 +2,25 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import {
   ChangeEvent,
+  useEffect,
   useState,
 } from 'react';
 
 import DatePicker from 'react-datepicker';
+import Select, { SingleValue } from 'react-select';
 
 import axiosInstance from '../auth/axios';
 import { ProductFormProps } from '../types/calendar';
+import { Student } from '../types/student';
+import { Subject } from '../types/subject';
 
 const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
     const [error, setError] = useState('');
     const [start, setStart] = useState(event.start);
     const [end, setEnd] = useState(event.end);
-
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [fullSearchText, setFullSearchText] = useState('');
+    const [students, setStudents] = useState<Student[]>([]);
     const [formData, setFormData] = useState({
         itemName: '',
         timeStart: '',
@@ -22,7 +28,29 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
         description: '',
         type: 'CALENDAR',
         eventType: '',
+        subjectId: '',
+        userId: '',
     });
+    const [selectedCategory, setSelectedCategory] = useState('');
+
+    useEffect(() => {
+        const fetchLevels = async () => {
+          try {
+            console.log('start', start.toISOString());
+            const [ subjectsResponse, studentsResponse] = await Promise.all([
+              axiosInstance.get('http://localhost:3000/subject'), 
+              axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=STUDENT'),
+            ]);
+    
+            setSubjects(subjectsResponse.data);
+            setStudents(studentsResponse.data);
+          } catch (error) {
+            console.error('Error fetching subjects and students:', error);
+          }
+        };
+    
+        fetchLevels();
+    }, [start, end]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,20 +58,17 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
             ...formData,
             timeStart: start ? start.toISOString() : '',
             timeEnd: end ? end.toISOString() : '',
+            subjectId: formData.subjectId || undefined,
+            userId: formData.userId || undefined,
         };
-        console.log("updatedFormData",updatedFormData);
-        console.log("formData",formData);
-        
+        console.log("updatedFormData", updatedFormData);
         try {
-
             await axiosInstance.post('http://localhost:3000/calendaritem/', updatedFormData);
-
-            onClose()
+            onClose();
         } catch (error) {
             setError('An error occurred. Please try again.');
         }
     };
-
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -59,6 +84,30 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
             ...prevState,
             [name]: value,
         }));
+        // Update selected category state
+        if (name === 'eventType') {
+            setSelectedCategory(value);
+        }
+    };
+
+    const handleReactSelectChange = (field: string) => (selectedOption: SingleValue<{ value: string; label: string }>) => {
+        if (selectedOption) {
+            setFormData((prevState) => ({
+                ...prevState,
+                [field]: selectedOption.value,
+            }));
+        }
+    };
+
+    const handleSearch = (inputValue: string) => {
+        setFullSearchText(inputValue);
+    };
+
+    const customStyles = {
+        container: (provided: any) => ({
+            ...provided,
+            width: '100%',
+        }),
     };
 
     return (
@@ -90,26 +139,29 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
                     <span className="sr-only">Close modal</span>
                 </button>
             </div>
-            <form className="p-4 md:p-5 " onSubmit={handleSubmit}>
+            <form className="p-4 md:p-5" onSubmit={handleSubmit}>
                 <div className="grid gap-10 mb-4 grid-cols-2">
-                    <div className="col-span-2">
-                        <label
-                            htmlFor="itemName"
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            name="itemName"
-                            id="itemName"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Type product name"
-                            value={formData.itemName}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                    {/* Conditionally render the name field */}
+                    {!(selectedCategory === 'ABSENCE' || formData.eventType === 'ABSENCE') && (
+                        <div className="col-span-2">
+                            <label
+                                htmlFor="itemName"
+                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                name="itemName"
+                                id="itemName"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Type product name"
+                                value={formData.itemName}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    )}
                     <div className="col-span-2 sm:col-span-1">
                         <label
                             htmlFor="timeStart"
@@ -169,24 +221,36 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
                             <option value="ABSENCE">ABSENCE</option>
                         </select>
                     </div>
-                    {/* <div className="col-span-2">
-                        <label
-                            htmlFor="description"
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                            Product Description
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows={4}
-                            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Write product description here"
-                            value={formData.description}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div> */}
+                    {(selectedCategory === 'ABSENCE' || formData.eventType === 'ABSENCE') && (
+                        <>
+                            <div className="col-span-1">
+                                <label htmlFor="subjectId" className="block mb-2 text-sm font-medium text-gray-900">
+                                    Subject:
+                                </label>
+                                <Select
+                                    options={subjects.map((subject) => ({ value: subject.subjectId, label: subject.name }))}
+                                    onChange={handleReactSelectChange('subjectId')}
+                                    onInputChange={handleSearch}
+                                    isSearchable={true}
+                                    styles={customStyles}
+                                    className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-red-500 block w-full"
+                                />
+                            </div>
+                            <div className="col-span-1">
+                                <label htmlFor="assignedFor" className="block mb-2 text-sm font-medium text-gray-900">
+                                    Student:
+                                </label>
+                                <Select
+                                    options={students.map((student) => ({ value: student.userId, label: `${student.firstName} ${student.lastName}` }))}
+                                    onChange={handleReactSelectChange('userId')}
+                                    onInputChange={handleSearch}
+                                    isSearchable={true}
+                                    styles={customStyles}
+                                    className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
                 <button
                     type="submit"
