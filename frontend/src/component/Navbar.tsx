@@ -6,6 +6,7 @@ import React, {
 
 import { jwtDecode } from 'jwt-decode';
 import { LogOut } from 'react-feather';
+import { useTranslation } from 'react-i18next';
 
 import useClickOutside from '../helpers/useClickOutside';
 
@@ -46,12 +47,23 @@ function DropdownItem({ children, onClick }: DropdownItemProps) {
     </li>
   );
 }
+const countries = [
+  { code: 'fr', name: 'Français', country_code: 'fr' },
+  { code: 'en', name: 'English', country_code: 'gb' },
+  { code: 'ar', name: 'العربية', country_code: 'ae' }
+];
+
 
 // Navbar component
 function Navbar() {
+  const { t, i18n } = useTranslation();
+
   const [userPhoto, setUserPhoto] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [selectedLang, setSelectedLang] = useState('en'); // Default language
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -60,10 +72,12 @@ function Navbar() {
         const parsedToken = jwtDecode<any>(token);
         setUserName(`${parsedToken.firstName} ${parsedToken.lastName}`);
         setUserEmail(parsedToken.email);
+        setUserRole(parsedToken.role);
 
-        if (parsedToken.gender === 'MEN') {
+
+        if (parsedToken.gender === 'MAN') {
           setUserPhoto('/img/Profile-Male-PNG-removebg-preview (1).png');
-        } else if (parsedToken.gender === 'WOMEN') {
+        } else if (parsedToken.gender === 'WOMAN') {
           setUserPhoto('/img/219969.png');
         }
       } catch (error) {
@@ -126,8 +140,7 @@ function Navbar() {
     </div>
     <div className="w-full ps-3">
       <div className="text-gray-500 text-sm mb-1.5 dark:text-gray-400">
-        Notification d'absence : <span className="font-semibold text-gray-900 dark:text-white">Mootez Bouazra</span> est absent le <span className="font-semibold text-gray-900 dark:text-white">25 août en séance Francais</span>.
-      </div>
+      Absence Notification: <span className="font-semibold text-gray-900 dark:text-white">Mootez Bouazra</span> is absent on <span className="font-semibold text-gray-900 dark:text-white">August 18th during the French lession</span>.      </div>
       <div className="text-xs text-blue-600 dark:text-blue-500">1 week ago</div>
     </div>
   </div>
@@ -163,6 +176,24 @@ function Navbar() {
               </a>
             </DropdownItem>
           </Dropdown>
+<Dropdown
+            trigger={
+              <button id="dropdownNotificationButton" className="relative w-10 h-10 pt-5 inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400">
+                <img src={`https://flagcdn.com/w20/${countries.find(c => c.code === selectedLang)?.country_code}.png`} alt="Language Flag" className="w-6 h-6 rounded-full " />
+              </button>
+            }
+          >
+            {countries.map((country) => (
+              <DropdownItem key={country.code} onClick={() => { i18n.changeLanguage(country.code); setSelectedLang(country.code); }}>
+                <div className="flex items-center">
+                  <span className="w-6 h-6 inline-block rounded-full overflow-hidden">
+                    <img className="w-full h-full " src={`https://flagcdn.com/w20/${country.country_code}.png`} alt={country.name} />
+                  </span>
+                  <span className="ms-3 text-gray-700 dark:text-gray-200">{country.name}</span>
+                </div>
+              </DropdownItem>
+            ))}
+          </Dropdown>
 
           <Dropdown
             trigger={
@@ -177,6 +208,8 @@ function Navbar() {
               <div className="w-full ps-3">
                 <div className="text-gray-500 text-sm mb-1.5 dark:text-gray-400">{userName}</div>
                 <div className="text-xs text-blue-600 dark:text-blue-500">{userEmail}</div>
+                <div className="text-xs text-blue-600 dark:text-blue-500 pt-3">{userRole}</div>
+
               </div>
             </DropdownItem>
             <DropdownItem onClick={handleLogOut}>
@@ -185,6 +218,7 @@ function Navbar() {
             </DropdownItem>
           </Dropdown>
         </div>
+        
       </div>
     </nav>
   );

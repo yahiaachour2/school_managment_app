@@ -5,7 +5,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import {
   Link,
   useNavigate,
@@ -38,13 +37,10 @@ const CreateTeacher = () => {
     useEffect(() => {
       const fetchLevelsAndschedules = async () => {
         try {
-          const [levelsResponse, scheduleResponse] = await Promise.all([
+          const [levelsResponse] = await Promise.all([
             axiosInstance.get('http://localhost:3000/level'),
-            axiosInstance.get('http://localhost:3000/schedule'), // Adjust endpoint as necessary
-            // Adjust endpoint as necessary
           ]);
           setLevels(levelsResponse.data);
-          setschedule(scheduleResponse.data);
 
         } catch (error) {
           console.error('Error fetching levels and parents:', error);
@@ -108,7 +104,7 @@ const CreateTeacher = () => {
       e.preventDefault();
   
       try {
-        await axios.post('http://localhost:3000/users/', formData);
+        await axiosInstance.post('http://localhost:3000/users/', formData);
         navigate('/teacher');
       } catch (error) {
         setError('An error occurred. Please try again.');
@@ -125,7 +121,7 @@ const CreateTeacher = () => {
     return (
       <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
         <div className="flex justify-center mb-5">
-          <h2 className="text-xl font-bold">Create Enseignant</h2>
+          <h2 className="text-xl font-bold">Create Teacher</h2>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
@@ -198,25 +194,15 @@ const CreateTeacher = () => {
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
             />
           </div> */}
-          <div className="col-span-1">
-            <label htmlFor="schedule" className="block mb-2 text-sm font-medium text-gray-900">schedule:</label>
-            <Select
-              options={schedule.map(schedule => ({ value: schedule.scheduleId , label: `${schedule.scheduleName}`}))}
-              onChange={handleScheduleChange}
-              onInputChange={handleSearch}
-              isSearchable={true}
-              styles={customStyles}
-              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
-            />
-          </div>
+      
           <div className="col-span-1">
             <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900">Gender:</label>
             <Select
               onChange={handleGenderChange}
               options={[
                 { value: '', label: 'Select ...' },
-                { value: 'MEN', label: 'MEN' },
-                { value: 'WOMEN', label: 'WOMEN' },
+                { value: 'MAN', label: 'MAN' },
+                { value: 'WOMAN', label: 'WOMAN' },
               ]}
               styles={customStyles}
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"

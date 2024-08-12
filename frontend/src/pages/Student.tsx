@@ -4,7 +4,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import {
@@ -63,7 +62,7 @@ export default function Student() {
   const handleDelete = async (userId: string) => {
     if (userId) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/users/delete/${userId}`);
+        await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/users/${userId}`);
         setData(prevData => prevData.filter(item => item.userId !== userId));
         // fetchData('STUDENT'); // Fetch students after deletion
         toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
@@ -129,10 +128,10 @@ export default function Student() {
       <ConfirmDialog />
       <div className='flex justify-between pr-10'>
         <h3 className='text-3xl m-6'>
-          Liste Students
+        list Students
         </h3>
         <Link to="/createstudent">
-          <Button label="Add Student" className="m-3 p-button-success" />
+          <Button label="Create New Student" className="m-3 p-button-success" />
         </Link>
       </div>
       <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName="" breakpoint='250px'  >

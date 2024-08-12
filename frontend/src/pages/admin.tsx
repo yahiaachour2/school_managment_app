@@ -4,7 +4,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import {
@@ -60,7 +59,7 @@ export default function Admin() {
     const handleDelete = async (userId: string) => {
       if (userId) {
         try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/users/delete/${userId}`);
+          await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/users/${userId}`);
           setData(prevData => prevData.filter(item => item.userId !== userId));
           // fetchData('ADMIN'); // Fetch students after deletion
           toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Admin deleted', life: 3000 });
@@ -127,10 +126,10 @@ export default function Admin() {
         <ConfirmDialog />
         <div className='flex justify-between pr-10'>
           <h3 className='text-3xl m-6'>
-            Liste Admin
+            List Admin
           </h3>
           <Link to="/createadmin">
-            <Button label="Add Admin" className="m-3 p-button-success" />
+            <Button label="Create Admin" className="m-3 p-button-success" />
           </Link>
         </div>
         <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName=""  >

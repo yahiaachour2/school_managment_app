@@ -5,7 +5,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import {
   Link,
   useNavigate,
@@ -15,10 +14,7 @@ import Select, { SingleValue } from 'react-select';
 
 import axiosInstance from '../auth/axios';
 import { Level } from '../types/level';
-import {
-  FormateScheduleResponse,
-  Schedule,
-} from '../types/schedule';
+import { FormateScheduleResponse } from '../types/schedule';
 
 // const transformUser = (userData: any) => {
 //     return {
@@ -54,7 +50,7 @@ const UpdateTeacher = () => {
             try {
 console.log("form",schedule);
 
-                const response = await axiosInstance.get(`http://localhost:3000/users/get/${params.userId}`);
+                const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
 
                 // const transformedUser = transformUser(response.data.users);
                 setFormData(response.data.users);
@@ -67,30 +63,7 @@ console.log("form",schedule);
             fetchTeacher();
         }
     }, [params.userId]);
-    useEffect(() => {
-        const fetchLevelsAndschedules = async () => {
-            try {
-                const [levelsResponse, scheduleResponse] = await Promise.all([
-                    axiosInstance.get('http://localhost:3000/level'),
-                    axiosInstance.get('http://localhost:3000/schedule'), // Adjust endpoint as necessary
-                    // Adjust endpoint as necessary
-                ]);
-                setschedule(scheduleResponse.data.map((schedule: Schedule) =>{
-            if (schedule) {
-                    return { label: `${schedule.scheduleName}`, value: schedule.scheduleId }
-                } else {
-                    return { label: '', value: ''}
-                }
-                }));
-                setLevels(levelsResponse.data);
-                
-            } catch (error) {
-                console.error('Error fetching levels and parents:', error);
-            }
-        };
-
-        fetchLevelsAndschedules();
-    }, []);
+ 
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -113,15 +86,7 @@ console.log("form",schedule);
         }
     };
 
-    // const handleParentChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
-    //   if (selectedOption) {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       parentId: selectedOption.value,
-    //       parentName: selectedOption.label
-    //     }));
-    //   }
-    // };
+  
     const handleScheduleChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
         if (selectedOption) {
             setFormData((prevState) => ({
@@ -147,7 +112,7 @@ console.log("form",schedule);
         e.preventDefault();
 
         try {
-            await axios.post('http://localhost:3000/users/', formData);
+            await axiosInstance.put(`http://localhost:3000/users/${params.userId}`, formData);
             navigate('/teacher');
         } catch (error) {
             setError('An error occurred. Please try again.');
@@ -164,7 +129,7 @@ console.log("form",schedule);
     return (
         <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
             <div className="flex justify-center mb-5">
-                <h2 className="text-xl font-bold">Update Enseignant</h2>
+                <h2 className="text-xl font-bold">Update Teacher</h2>
             </div>
             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
                 <div className="col-span-1">
@@ -237,18 +202,7 @@ console.log("form",schedule);
                 className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
               />
             </div> */}
-                <div className="col-span-1">
-                    <label htmlFor="schedule" className="block mb-2 text-sm font-medium text-gray-900">schedule:</label>
-                    <Select
-                        options={schedule}
-                        value={schedule.find(schedule=>schedule.value === formData?.schedule?.scheduleId) || null}
-                        onChange={handleScheduleChange}
-                        onInputChange={handleSearch}
-                        isSearchable={true}
-                        styles={customStyles}
-                        className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
-                    />
-                </div>
+       
                 <div className="col-span-1">
                     <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900">Gender:</label>
                     <Select
@@ -257,8 +211,8 @@ console.log("form",schedule);
 
                         options={[
                             { value: '', label: 'Select ...' },
-                            { value: 'MEN', label: 'MEN' },
-                            { value: 'WOMEN', label: 'WOMEN' },
+                            { value: 'MAN', label: 'MAN' },
+                            { value: 'WOMAN', label: 'WOMAN' },
                         ]}
                         styles={customStyles}
                         className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"

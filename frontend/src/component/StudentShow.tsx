@@ -59,7 +59,7 @@ function StudentShow() {
     navigate(`/schedule/student/${params.userId}`);
   };
 
-  const imageSrc = formData.gender === 'MEN'
+  const imageSrc = formData.gender === 'MAN'
     ? '/img/Profile-Male-PNG.png'
     : '/img/219969.png';
 
@@ -96,7 +96,6 @@ function StudentShow() {
         label="View Schedule"
         icon="pi pi-calendar"
         onClick={handleViewScheduleClick}
-        className="p-button-info"
       />
       <Button
   

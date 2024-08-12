@@ -43,7 +43,7 @@ function AdminShow() {
   }, [params.userId]);
 
   const handleBackClick = () => {
-    navigate('/admins'); // Adjust the path according to your routing
+    navigate('/admin'); // Adjust the path according to your routing
   };
 
   const header = (
@@ -85,8 +85,8 @@ const footer = (
 );
 
 // Determine the image source based on gender
-const imageSrc = formData.gender === 'MEN'
-? '/img/teachermen.png'
+const imageSrc = formData.gender === 'MAN'
+? '/img/teachermen.jpg'
 : '/img/teacherwomen.png';
 return (
     <div className="my-20 flex flex-col m-5 space-y-4 w-full ">

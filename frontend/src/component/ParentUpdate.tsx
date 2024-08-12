@@ -60,8 +60,10 @@ function ParentUpdate() {
   useEffect(() => {
     const fetchDocument = async () => {
       try {
-        const response = await axiosInstance.get(`http://localhost:3000/users/get/${params.userId}`);
+        const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
         const transformedUser = transformUser(response.data.users);
+        console.log("response.data.users",response.data.users);
+        
         setFormData(transformedUser);
       } catch (error) {
         console.error(`Error fetching Student with ID ${params.userId}:`, error);
@@ -89,13 +91,7 @@ function ParentUpdate() {
           }
         }));
         setParents(parentsResponse.data);
-        // setSchedule(scheduleResponse.data.map((schedule: Schedule) =>{
-        //   if (schedule){
-        //   return {label: schedule.scheduleName, value: schedule.scheduleId}
-        // } else {
-        //   return {label: '', value: ''}
-        // }
-        // }));
+        
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
       }
@@ -154,7 +150,7 @@ function ParentUpdate() {
     e.preventDefault();
 
     try {
-      await axios.put(`http://localhost:3000/users/update/${params.userId}`, formData);
+      await axios.put(`http://localhost:3000/users/${params.userId}`, formData);
       navigate('/');
     } catch (error) {
       setError('An error occurred. Please try again.');
@@ -236,7 +232,7 @@ function ParentUpdate() {
           />
         </div>
         <div className="col-span-1">
-          <label htmlFor="childrenId" className="block mb-2 text-sm font-medium text-gray-900">Enfant:</label>
+          <label htmlFor="childrenId" className="block mb-2 text-sm font-medium text-gray-900">Children:</label>
           <Select
             options={formData.children.map(child => ({ value: child.userId, label: `${child.firstName} ${child.lastName}` }))}
             onChange={handleChilderenChange}
@@ -253,8 +249,8 @@ function ParentUpdate() {
             value={{ value: formData.gender, label: formData.gender }}
             options={[
               { value: '', label: 'Select ...' },
-              { value: 'MEN', label: 'MEN' },
-              { value: 'WOMEN', label: 'WOMEN' },
+              { value: 'MAN', label: 'MAN' },
+              { value: 'WOMAN', label: 'WOMAN' },
             ]}
             styles={customStyles}
             className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"

@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 
+import { Checkbox } from 'primereact/checkbox';
 import DatePicker from 'react-datepicker';
 import Select, { SingleValue } from 'react-select';
 
@@ -30,25 +31,28 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
         eventType: '',
         subjectId: '',
         userId: '',
+        sendToParent: false,
+        sendToSchool: false,
     });
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [checked, setChecked] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchLevels = async () => {
-          try {
-            console.log('start', start.toISOString());
-            const [ subjectsResponse, studentsResponse] = await Promise.all([
-              axiosInstance.get('http://localhost:3000/subject'), 
-              axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=STUDENT'),
-            ]);
-    
-            setSubjects(subjectsResponse.data);
-            setStudents(studentsResponse.data);
-          } catch (error) {
-            console.error('Error fetching subjects and students:', error);
-          }
+            try {
+                console.log('start', start.toISOString());
+                const [subjectsResponse, studentsResponse] = await Promise.all([
+                    axiosInstance.get('http://localhost:3000/subject'),
+                    axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=STUDENT'),
+                ]);
+
+                setSubjects(subjectsResponse.data);
+                setStudents(studentsResponse.data);
+            } catch (error) {
+                console.error('Error fetching subjects and students:', error);
+            }
         };
-    
+
         fetchLevels();
     }, [start, end]);
 
@@ -221,8 +225,26 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
                             <option value="ABSENCE">ABSENCE</option>
                         </select>
                     </div>
-                    {(selectedCategory === 'ABSENCE' || formData.eventType === 'ABSENCE') && (
+                    <div className="col-span-2 sm:col-span-1 pt-4 flex items-center space-x-2">
+                        <label htmlFor="sendToSchool" className="block text-sm font-medium text-gray-900">
+                            Send Notification to All School
+                        </label>
+                        <Checkbox
+                            onChange={(e) => setFormData((prevState) => ({ ...prevState, sendToSchool: e.checked ?? false }))}
+                            checked={formData.sendToSchool}
+                        />
+                    </div>
+                    {selectedCategory === 'ABSENCE' || formData.eventType === 'ABSENCE' ? (
                         <>
+                            <div className="col-span-2 sm:col-span-1 pt-4 flex items-center space-x-2">
+                                <label htmlFor="sendToParent" className="block text-sm font-medium text-gray-900">
+                                    Send Notification to Parent
+                                </label>
+                                <Checkbox
+                                    onChange={(e) => setFormData((prevState) => ({ ...prevState, sendToParent: e.checked ?? false }))}
+                                    checked={formData.sendToParent}
+                                />
+                            </div>
                             <div className="col-span-1">
                                 <label htmlFor="subjectId" className="block mb-2 text-sm font-medium text-gray-900">
                                     Subject:
@@ -250,8 +272,9 @@ const CreateEvent: React.FC<ProductFormProps> = ({ onClose, event }) => {
                                 />
                             </div>
                         </>
-                    )}
+                    ) : null}
                 </div>
+
                 <button
                     type="submit"
                     className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

@@ -110,8 +110,8 @@ function TeacherShow() {
   );
 
   // Determine the image source based on gender
-  const imageSrc = formData.gender === 'MEN'
-    ? '/img/teachermen.png'
+  const imageSrc = formData.gender === 'MAN'
+    ? '/img/teachermen.jpg'
     : '/img/teacherwomen.png';
 
   return (

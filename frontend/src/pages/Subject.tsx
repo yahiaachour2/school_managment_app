@@ -116,10 +116,10 @@ export default function Subject() {
           <ConfirmDialog />
           <div className=' flex justify-between pr-10'>
             <h3 className='text-3xl m-6'>
-              Liste Subject
+              List Subject
             </h3>
             <Link to="/createsubject">
-              <Button label="Add Subject" className="m-3 p-button-success" />
+              <Button label="Create Subject" className="m-3 p-button-success" />
             </Link>
           </div>
           <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName="" className="!min-w-max" >

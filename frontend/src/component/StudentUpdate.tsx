@@ -22,13 +22,15 @@ import { Student } from '../types/student';
 const transformUser = (userData: any) => {
   return {
     ...userData,
-     userId: userData.userId,
-     parentName: `${userData?.parent?.firstName} ${userData?.parent?.lastName}`,
+    userId: userData.userId,
+    parentName: `${userData?.parent?.firstName} ${userData?.parent?.lastName}`,
     gender: userData.gender || '',
   };
 };
+
 function StudentUpdate() {
   const [formData, setFormData] = useState<Student>({
+    userId: '',
     lastName: '',
     firstName: '',
     email: '',
@@ -37,10 +39,10 @@ function StudentUpdate() {
     levelId: '',
     parentId: '',
     schoolId: '',
-    parent: { parentId: '', firstName: '', lastName: '' }, // Update parent object
     gender: '',
     phone: '',
     level: { levelId: '', name: '' },
+    parent: { userId: '', firstName: '', lastName: '' }, // Ensure this matches the Parent type
   });
 
   const [error, setError] = useState('');
@@ -54,11 +56,18 @@ function StudentUpdate() {
   useEffect(() => {
     const fetchDocument = async () => {
       try {
-
-        const response = await axiosInstance.get(`http://localhost:3000/users/get/${params.userId}`);
+        const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
 
         const transformedUser = transformUser(response.data.users);
-        setFormData(transformedUser);
+        setFormData((prevState) => ({
+          ...prevState,
+          ...transformedUser,
+          parent: {
+            userId: response.data.users.parent?.userId || '',
+            firstName: response.data.users.parent?.firstName || '',
+            lastName: response.data.users.parent?.lastName || '',
+          },
+        }));
       } catch (error) {
         console.error(`Error fetching Student with ID ${params.userId}:`, error);
       }
@@ -77,13 +86,10 @@ function StudentUpdate() {
           axiosInstance.get('http://localhost:3000/users'),
           // axios.get('http://localhost:3000/schedule'), // Adjust endpoint as necessary
         ]);
-        setLevels(levelsResponse.data.map((level: Level) =>{
-          if (level){
-          return {label: level.name, value: level.levelId}
-        } else {
-          return {label: '', value: ''}
-        }
-        }));
+        setLevels(levelsResponse.data.map((level: Level) => ({
+          label: level.name,
+          value: level.levelId,
+        })));
         setParents(parentsResponse.data);
         // setSchedule(scheduleResponse.data.map((schedule: Schedule) =>{
         //   if (schedule){
@@ -140,8 +146,8 @@ function StudentUpdate() {
     e.preventDefault();
 
     try {
-      await axiosInstance.put(`http://localhost:3000/users/update/${params.userId}`, formData);
-      navigate('/');
+      await axiosInstance.put(`http://localhost:3000/users/${params.userId}`, formData);
+      navigate('/students');
     } catch (error) {
       setError('An error occurred. Please try again.');
     }
@@ -221,6 +227,7 @@ function StudentUpdate() {
             required
           />
         </div>
+        
         <div className="col-span-1">
           <label htmlFor="levelId" className="block mb-2 text-sm font-medium text-gray-900">Level:</label>
           <Select
@@ -243,26 +250,15 @@ function StudentUpdate() {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
         </div>
-        {/* <div className="col-span-1">
-          <label htmlFor="schedule" className="block mb-2 text-sm font-medium text-gray-900">Schedule:</label>
-          <Select
-            options={schedule.map(schedule => ({ value: schedule.scheduleId, label: `${schedule.scheduleName}` }))}
-            onChange={handleScheduleChange}
-            onInputChange={handleSearch}
-            isSearchable={true}
-            styles={customStyles}
-            className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
-          />
-        </div> */}
+        
         <div className="col-span-1">
           <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900">Gender:</label>
           <Select
             onChange={handleGenderChange}
-            value={{ value: formData.gender, label: formData.gender }}
+            value={{ label: formData.gender, value: formData.gender }}
             options={[
-              { value: '', label: 'Select ...' },
-              { value: 'MEN', label: 'MEN' },
-              { value: 'WOMEN', label: 'WOMEN' },
+              { label: 'MAN', value: 'MAN' },
+              { label: 'WOMAN', value: 'WOMAN' },
             ]}
             styles={customStyles}
             className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
@@ -280,16 +276,23 @@ function StudentUpdate() {
             required
           />
         </div>
-        {error && <div className="col-span-2 text-red-600 mb-5">{error}</div>}
-        <div className="col-span-2 flex justify-evenly">
-          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none  focus:ring-blue-300 font-medium rounded-lg text-sm  px-10 py-2.5 text-center">
-            Update
+     
+        <div className="col-span-2 flex justify-end gap-4">
+          <button
+            type="submit"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Update Student
           </button>
-          <Link to="/students">
-            <button type="button" className=" text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none  focus:ring-blue-300 font-medium rounded-lg text-sm  px-10 py-2.5 text-center">Cancel</button>
+          <Link
+            to="/students"
+            className="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Cancel
           </Link>
         </div>
       </form>
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 }

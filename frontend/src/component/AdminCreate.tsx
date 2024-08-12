@@ -20,10 +20,7 @@ const CreateAdmin = () => {
       email: '',
       password: '',
       role: 'ADMIN',
-      levelId: '',
-      parentId: '',
-      parentName: '',
-      schedule: '',
+   
       gender: '',
       phone: '',
     });
@@ -35,26 +32,7 @@ const CreateAdmin = () => {
     const [schedule, setschedule] = useState<any[]>([]);
   
     const navigate = useNavigate();
-    // useEffect(() => {
-    //   const fetchLevelsAndParents = async () => {
-    //     try {
-    //       const [levelsResponse, parentsResponse, scheduleResponse] = await Promise.all([
-    //         axios.get('http://localhost:3000/level'),
-    //         axios.get('http://localhost:3000/users'), 
-    //         axios.get('http://localhost:3000/schedule'), // Adjust endpoint as necessary
-    //         // Adjust endpoint as necessary
-    //       ]);
-    //       setLevels(levelsResponse.data);
-    //       setParents(parentsResponse.data);
-    //       setschedule(scheduleResponse.data);
-  
-    //     } catch (error) {
-    //       console.error('Error fetching levels and parents:', error);
-    //     }
-    //   };
-  
-    //   fetchLevelsAndParents();
-    // }, []);
+
   
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
@@ -125,7 +103,7 @@ const CreateAdmin = () => {
     return (
       <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
         <div className="flex justify-center mb-5">
-          <h2 className="text-xl font-bold">Create Student</h2>
+          <h2 className="text-xl font-bold">Create Admin</h2>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
@@ -215,8 +193,8 @@ const CreateAdmin = () => {
               onChange={handleGenderChange}
               options={[
                 { value: '', label: 'Select ...' },
-                { value: 'MEN', label: 'MEN' },
-                { value: 'WOMEN', label: 'WOMEN' },
+                { value: 'MAN', label: 'MAN' },
+                { value: 'WOMAN', label: 'WOMAN' },
               ]}
               styles={customStyles}
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
@@ -239,7 +217,7 @@ const CreateAdmin = () => {
             <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center">
               Create
             </button>
-            <Link to="/students">
+            <Link to="/admin">
               <button type="button" className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center">
                 Cancel
               </button>

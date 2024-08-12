@@ -42,7 +42,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
     const fetchLevels = async () => {
       try {
         console.log('start', start.toISOString());
-        const [levelsResponse, subjectsResponse, roomsResponse,teacherResponse] = await Promise.all([
+        const [levelsResponse, subjectsResponse, roomsResponse, teacherResponse] = await Promise.all([
           axiosInstance.get('http://localhost:3000/level'),
           axiosInstance.get('http://localhost:3000/subject'),
           axiosInstance.get('http://localhost:3000/room/available', {
@@ -53,17 +53,17 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
           }),
           axiosInstance.get('http://localhost:3000/users?page=1&limit=30&role=TEACHER'),
 
-          
-       
-          
+
+
+
         ]);
         setTeacher(teacherResponse.data);
 
         setLevels(levelsResponse.data);
         setSubjects(subjectsResponse.data);
         setRooms(roomsResponse.data);
-     
-        
+
+
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
       }
@@ -152,7 +152,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
       </div>
       <form className="p-4 md:p-5" onSubmit={handleSubmit}>
         <div className="grid gap-10 mb-4 grid-cols-2">
-        <div className="col-span-1">
+          <div className="col-span-1">
             <label htmlFor="subjectId" className="block mb-2 text-sm font-medium text-gray-900">
               Subject:
             </label>
@@ -219,11 +219,11 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               minDate={start}
               dateFormat="MM/dd/yyyy h:mm aa"
               showTimeInput
-              
+
               className="border-solid border-2 border-black-600 w-44"
             />
           </div>
-        
+
           <div className="col-span-1">
             <label htmlFor="levelId" className="block mb-2 text-sm font-medium text-gray-900">
               Level:
@@ -239,7 +239,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
           </div>
           <div className="col-span-1">
             <label htmlFor="roomId" className="block mb-2 text-sm font-medium text-gray-900">
-              Rooms Availables:
+              Rooms Available:
             </label>
             <Select
               options={rooms.map((room) => ({ value: room.roomId, label: room.name }))}
@@ -250,19 +250,19 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
             />
           </div>
-     
+
           <div className="col-span-1">
             <label htmlFor="assignedFor" className="block mb-2 text-sm font-medium text-gray-900">
               Teacher:
             </label>
             <Select
-          options={teacher.map((user) => ({ value: user.userId, label: `${user.firstName} ${user.lastName}`}))}
-          onChange={handleSelectChange('userId')}
-          onInputChange={handleSearch}
-          isSearchable={true}
-          styles={customStyles}
-          className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
-        />
+              options={teacher.map((user) => ({ value: user.userId, label: `${user.firstName} ${user.lastName}` }))}
+              onChange={handleSelectChange('userId')}
+              onInputChange={handleSearch}
+              isSearchable={true}
+              styles={customStyles}
+              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
+            />
           </div>
         </div>
         <button

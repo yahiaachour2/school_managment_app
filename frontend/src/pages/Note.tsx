@@ -115,7 +115,7 @@ export default function Note() {
       return (
         <React.Fragment>
           <Link className='flex items-center space-x-2 hover:text-blue-500 hover:underline ' to={`/level/${rowData.levelId}`}>
-            <h1 className=''>Voir Listes</h1> 
+            <h1 className=''>Voir List</h1> 
             <FaExternalLinkAlt />
             </Link>
            
@@ -141,16 +141,16 @@ export default function Note() {
         <ConfirmDialog />
         <div className=' flex justify-between pr-10'>
           <h3 className='text-3xl m-6'>
-            Liste Levels
+            List Levels
           </h3>
           <Link to="/createlevel">
-            <Button label="Add Level" className="m-3 p-button-success" />
+            <Button label="Create Level" className="m-3 p-button-success" />
           </Link>
         </div>
         <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName="" className="!min-w-max" >
         <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
           <Column field="name" header=" Name"></Column>
-          <Column body={linkVoirStudent}  header=" Liste de Etudiant"></Column>
+          <Column body={linkVoirStudent}  header=" List de Etudiant"></Column>
           <Column  body={linkVoirSchedule} header=" Schedule"></Column>
   
           <Column header="Action" body={actionBodyTemplate}></Column>

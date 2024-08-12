@@ -4,7 +4,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import {
@@ -24,128 +23,138 @@ import {
 import axiosInstance from '../auth/axios';
 
 export default function Parent() {
-    const [customers, setCustomers] = useState([]);
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(30);
-    const [totalPages, setTotalPages] = useState<number>(10);
-    const navigate = useNavigate();
-    const toast = useRef<Toast>(null);
-    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  
-    const  fetchData = async (role?: string) => {
-      
+  const [customers, setCustomers] = useState([]);
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(30);
+  const [totalPages, setTotalPages] = useState<number>(10);
+  const navigate = useNavigate();
+  const toast = useRef<Toast>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const fetchData = async (role?: string) => {
+
+    try {
+
+      let url = `${import.meta.env.VITE_API_URL}/users?page=${page}&limit=${limit}`;
+      if (role) {
+        url += `&role=${role.trim()}`;
+      }
+
+      const response = await axiosInstance.get(url);
+      setData(response.data);
+    } catch (error) {
+      setError(JSON.stringify(error, null, 2));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData('PARENT'); // Fetch students by default
+  }, [page, limit]);
+
+  const handleDelete = async (userId: string) => {
+    if (userId) {
       try {
-        
-        let url = `${import.meta.env.VITE_API_URL}/users?page=${page}&limit=${limit}`;
-        if (role) {
-          url += `&role=${role.trim()}`;
-        }
-  
-        const response = await axiosInstance.get(url);
-        setData(response.data);
+        await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/users/${userId}`);
+        setData(prevData => prevData.filter(item => item.userId !== userId));
+        // fetchData('PARENT'); // Fetch students after deletion
+        toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
       } catch (error) {
-        setError(JSON.stringify(error, null, 2));
-      } finally {
-        setLoading(false);
+        console.error('Error deleting student:', error);
+        setError(`Error deleting document with ID ${userId}: ${JSON.stringify(error, null, 2)}`);
       }
-    };
-  
-    useEffect(() => {
-      fetchData('PARENT'); // Fetch students by default
-    }, [page, limit]);
-  
-    const handleDelete = async (userId: string) => {
-      if (userId) {
-        try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/users/delete/${userId}`);
-          setData(prevData => prevData.filter(item => item.userId !== userId));
-          // fetchData('PARENT'); // Fetch students after deletion
-          toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
-        } catch (error) {
-          console.error('Error deleting student:', error);
-          setError(`Error deleting document with ID ${userId}: ${JSON.stringify(error, null, 2)}`);
-        }
+    }
+  };
+
+  const confirmDelete = (userId: string) => {
+    confirmDialog({
+      message: 'Are you sure you want to delete this Parent?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => handleDelete(userId),
+      reject: () => {
+        toast.current?.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
       }
-    };
-  
-    const confirmDelete = (userId: string) => {
-      confirmDialog({
-        message: 'Are you sure you want to delete this student?',
-        header: 'Confirmation',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => handleDelete(userId),
-        reject: () => {
-          toast.current?.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
-      });
-    };
-  
-    const handlePageChange = (newPage: number) => {
-      setPage(newPage);
-    };
-  
-    const handleClick = (userId: string) => {
-      navigate(`/updateparent/${userId}`);
-    };
-    const handleClickShow = (userId: string) => {
-      navigate(`/showparent/${userId}`);
-    };
-  
-    const actionBodyTemplate = (rowData: any) => {
-      return (
-        <React.Fragment>
-          <Button
-            onClick={() => handleClick(rowData.userId)}
-            style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
-          >
-            <FaEdit className="text-blue-500" />
-          </Button>
-          <Button
-            onClick={() =>handleClickShow(rowData.userId)}
-            style={{ color: 'green', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
-          >
-            <IoEyeSharp className="text-green-500" />
-          </Button>
-          <Button
-            onClick={() => confirmDelete(rowData.userId)}
-            style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
-          >
-            <MdDeleteSweep className="text-red-500" />
-          </Button>
-        </React.Fragment>
-      );
-    };
-  
+    });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleClick = (userId: string) => {
+    navigate(`/updateparent/${userId}`);
+  };
+  const handleClickShow = (userId: string) => {
+    navigate(`/showparent/${userId}`);
+  };
+
+  const actionBodyTemplate = (rowData: any) => {
     return (
-      <div className="card rounded-md m-6">
-        <Toast ref={toast} />
-        <ConfirmDialog />
-        <div className='flex justify-between pr-10'>
-          <h3 className='text-3xl m-6'>
-            Liste Parent
-          </h3>
-          <Link to="/createparent">
-            <Button label="Add parent" className="m-3 p-button-success" />
-          </Link>
-        </div>
-        <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName=""  >
-          <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
-          <Column field="lastName" header="Last Name"></Column>
-          <Column field="firstName" header="First Name"></Column>
-          <Column field="email" header="E-mail"></Column>
-          <Column field="children" header="enfants" body={(data) => data.children.map((children: { firstName: any; }) => children.firstName).join(', ')}></Column>
-          {/* <Column field="level" header="Level" body={(data) => data.level ? data.level.name  : 'N/A'}></Column> */}
-          <Column field="gender" header="Gender"></Column>
-          {/* <Column field="schedule" header="schedule"body={(data) => data.schedule ? data.schedule.scheduleId  : 'N/A'}></Column> */}
-  
-          <Column field="phone" header="Phone"></Column>
-          <Column header="Action" body={actionBodyTemplate}></Column>
-        </DataTable>
-        {error && <div className="p-error">{error}</div>}
-      </div>
+      <React.Fragment>
+        <Button
+          onClick={() => handleClick(rowData.userId)}
+          style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
+        >
+          <FaEdit className="text-blue-500" />
+        </Button>
+        <Button
+          onClick={() => handleClickShow(rowData.userId)}
+          style={{ color: 'green', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
+        >
+          <IoEyeSharp className="text-green-500" />
+        </Button>
+        <Button
+          onClick={() => confirmDelete(rowData.userId)}
+          style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
+        >
+          <MdDeleteSweep className="text-red-500" />
+        </Button>
+      </React.Fragment>
     );
-  }
-  
+  };
+
+  return (
+    <div className="card rounded-md m-6">
+      <Toast ref={toast} />
+      <ConfirmDialog />
+      <div className='flex justify-between pr-10'>
+        <h3 className='text-3xl m-6'>
+          List Parent
+        </h3>
+        <Link to="/createparent">
+          <Button label="Create parent" className="m-3 p-button-success" />
+        </Link>
+      </div>
+      <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName=""  >
+        <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
+        <Column field="lastName" header="Last Name"></Column>
+        <Column field="firstName" header="First Name"></Column>
+        <Column field="email" header="E-mail"></Column>
+        <Column
+          field="children"
+          header="children"
+          body={(data) =>
+            data.children
+              .map(
+                (child: { firstName: string; lastName: string }) =>
+                  `${child.firstName} ${child.lastName}`
+              )
+              .join(', ')
+          }
+        />
+        {/* <Column field="level" header="Level" body={(data) => data.level ? data.level.name  : 'N/A'}></Column> */}
+        <Column field="gender" header="Gender"></Column>
+        {/* <Column field="schedule" header="schedule"body={(data) => data.schedule ? data.schedule.scheduleId  : 'N/A'}></Column> */}
+
+        <Column field="phone" header="Phone"></Column>
+        <Column header="Action" body={actionBodyTemplate}></Column>
+      </DataTable>
+      {error && <div className="p-error">{error}</div>}
+    </div>
+  );
+}

@@ -5,7 +5,6 @@ import React, {
   useState,
 } from 'react';
 
-import axios from 'axios';
 import {
   Link,
   useNavigate,
@@ -13,6 +12,7 @@ import {
 } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
 
+import axiosInstance from '../auth/axios';
 import { Admin } from '../types/admin';
 import {
   FormatedLevelResponse,
@@ -52,7 +52,7 @@ const transformUser = (userData: any) => {
       const fetchStudent = async () => {
         try {
   
-          const response = await axios.get(`http://localhost:3000/users/get/${params.userId}`);
+          const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
   
           const transformedUser = transformUser(response.data.users);
           setFormData(transformedUser);
@@ -137,8 +137,8 @@ const transformUser = (userData: any) => {
       e.preventDefault();
   
       try {
-        await axios.put(`http://localhost:3000/users/update/${params.userId}`, formData);
-        navigate('/');
+        await axiosInstance.put(`http://localhost:3000/users/${params.userId}`, formData);
+        navigate('/admin');
       } catch (error) {
         setError('An error occurred. Please try again.');
       }
@@ -167,7 +167,7 @@ const transformUser = (userData: any) => {
     return (
       <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
         <div className="flex justify-center mb-5">
-          <h2 className="text-xl font-bold">Update Student</h2>
+          <h2 className="text-xl font-bold">Update Admin</h2>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
@@ -258,8 +258,8 @@ const transformUser = (userData: any) => {
               value={{ value: formData.gender, label: formData.gender }}
               options={[
                 { value: '', label: 'Select ...' },
-                { value: 'MEN', label: 'MEN' },
-                { value: 'WOMEN', label: 'WOMEN' },
+                { value: 'MAN', label: 'MAN' },
+                { value: 'WOMAN', label: 'WOMAN' },
               ]}
               styles={customStyles}
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"

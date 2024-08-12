@@ -188,7 +188,7 @@ const CreateStudent = () => {
             />
           </div>  */}
           <div className="col-span-1">
-            <label htmlFor="childrenId" className="block mb-2 text-sm font-medium text-gray-900">Enfant:</label>
+            <label htmlFor="childrenId" className="block mb-2 text-sm font-medium text-gray-900">Children:</label>
             <Select
               options={children.map(children => ({ value: children.userId, label: `${children.firstName} ${children.lastName}` }))}
               onChange={handleChilderenChange}
@@ -215,8 +215,8 @@ const CreateStudent = () => {
               onChange={handleGenderChange}
               options={[
                 { value: '', label: 'Select ...' },
-                { value: 'MEN', label: 'MEN' },
-                { value: 'WOMEN', label: 'WOMEN' },
+                { value: 'MAN', label: 'MAN' },
+                { value: 'WOMAN', label: 'WOMAN' },
               ]}
               styles={customStyles}
               className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"

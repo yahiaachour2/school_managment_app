@@ -39,15 +39,12 @@ const CreateStudent = () => {
   useEffect(() => {
     const fetchLevelsAndParents = async () => {
       try {
-        const [levelsResponse, parentsResponse, scheduleResponse] = await Promise.all([
+        const [levelsResponse, parentsResponse,] = await Promise.all([
           axiosInstance.get('http://localhost:3000/level'),
-          axiosInstance.get('http://localhost:3000/users'), 
-          axiosInstance.get('http://localhost:3000/schedule'), // Adjust endpoint as necessary
-          // Adjust endpoint as necessary
+          axiosInstance.get('http://localhost:3000/users?role=PARENT'), 
         ]);
         setLevels(levelsResponse.data);
         setParents(parentsResponse.data);
-        setschedule(scheduleResponse.data);
 
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
@@ -216,8 +213,8 @@ const CreateStudent = () => {
             onChange={handleGenderChange}
             options={[
               { value: '', label: 'Select ...' },
-              { value: 'MEN', label: 'MEN' },
-              { value: 'WOMEN', label: 'WOMEN' },
+              { value: 'MAN', label: 'MAN' },
+              { value: 'WOMAN', label: 'WOMAN' },
             ]}
             styles={customStyles}
             className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
