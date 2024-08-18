@@ -81,7 +81,7 @@ const Sidebar = () => {
     { title: "Level", icon: <IoSchoolSharp  className='size-7'/>, link: "/level", roles: ['ADMIN'] },
     { title: "Subject", icon: <FaBook  className='size-7'/>, link: "/subject", roles: ['ADMIN'] },
 
-    { title: "Note", icon: <MdOutlineSpeakerNotes  className='size-7'/>, link: "/note", roles: ['ADMIN', 'TEACHER'] },
+    { title: "Note", icon: <MdOutlineSpeakerNotes  className='size-7'/>, link: "/note", roles: ['ADMIN','TEACHER','PARENT','STUDENT'] },
     
     { title: "Schedule", icon: <GrSchedules  className='size-7'/>, link: "/schedule", gap: true, roles: [ 'ADMIN','TEACHER','PARENT','STUDENT'] },
     { title: "Calendar", icon: <IoCalendarNumberOutline  className='size-7'/>, link: "/calendar", roles: ['ADMIN', 'TEACHER', 'PARENT','STUDENT'] },

@@ -50,7 +50,7 @@ function DropdownItem({ children, onClick }: DropdownItemProps) {
 const countries = [
   { code: 'fr', name: 'Français', country_code: 'fr' },
   { code: 'en', name: 'English', country_code: 'gb' },
-  { code: 'ar', name: 'العربية', country_code: 'ae' }
+  { code: 'tn', name: 'العربية', country_code: 'tn' }
 ];
 
 

@@ -142,7 +142,7 @@ export default function Level() {
       <ConfirmDialog />
       <div className=' flex justify-between pr-10'>
         <h3 className='text-3xl m-6'>
-          List Levels
+          List Level
         </h3>
         <Link to="/createlevel">
           <Button label="Create Level" className="m-3 p-button-success" />

@@ -93,8 +93,8 @@ return (
         <div className="flex justify-center ">
             <Card header={header} className="md:w-25rem ">
                 <div className='flex space-x-6 items-center'>
-                    <div className='min-w-20 min-h-20 w-1/5 h-1/5 border-r-4 rounded-b-lg	 border-gray-300 pr-4'>
-                        <img alt="Teacher" src={imageSrc} className="w-4/6 h-4/6  round object-cover" />
+                    <div className='min-w-20 min-h-20 w-1/5 h-1/5 border-r-4 	 border-gray-300 pr-4'>
+                        <img alt="Teacher" src={imageSrc} className="w-4/6 h-4/6 rounded-full  object-cover" />
                     </div>
                     <div className='flex-1'>
                         <p className="m-0">

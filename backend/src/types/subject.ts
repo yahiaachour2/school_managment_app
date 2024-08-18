@@ -2,6 +2,8 @@ export interface CreateSubjectInput {
     name: string;
     coefficient: string;
     scheduleId :string ;
+    userId:string;
+    levelId: string;
   }
   export interface GetSubjectInput {
     id: string;
