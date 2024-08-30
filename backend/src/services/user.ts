@@ -130,14 +130,14 @@ export class UserService {
 
       users = await sessionRepository.findOne({
         where: { userId: id },
-        relations: ["parent", "level", "children"],
+         relations: ["parent", "level", "children"],
       });
 
       if (!users) {
         throw new UserNotFoundError();
       }
     } catch (error: any) {
-      throw error;
+      throw error ;
     }
 
     return {
@@ -191,6 +191,7 @@ export class UserService {
 
     return users;
   }
+  
 
 
   //   async  getUsers(page: number, limit: number, role?: string) {
@@ -290,17 +291,17 @@ export class UserService {
       const user = await userRepository.findOne({
         where: { userId: id },
       });
-
+  
       if (!user) {
         throw new UserNotFoundError();
       }
-
-      await userRepository.remove(user);
-      return { message: "User deleted successfully" };
+  
+      user.deletedAt = new Date();
+      await userRepository.save(user);
+      return { message: "User deleted successfully (soft delete)" };
     } catch (error: any) {
       throw error;
     }
-  }
-}
+  }}
 
 export const userService = new UserService();

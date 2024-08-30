@@ -19,6 +19,8 @@ import Calendar from './calendar';
 import { CalendarItems } from './calendarItems';
 import { Level } from './level';
 import { School } from './school';
+import { User_subject } from './user_subject';
+import { UserSubjectNote } from './userSubjectNote ';
 
 // import { Student } from './student';
 
@@ -112,6 +114,15 @@ calendarItem!: CalendarItems[];
  
   @RelationId((user: User) => user.level)
   levelId!: string;
+
+ 
+ 
+  @OneToMany(() => User_subject, userSubject => userSubject.user)
+  userSubjects!: User_subject[];
+
+  @OneToMany(() => UserSubjectNote, userSubjectNote => userSubjectNote.user)
+  userSubjectNotes!: UserSubjectNote[];
+
 
   @BeforeInsert()
   setId () {

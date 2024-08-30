@@ -100,7 +100,7 @@ const AppRouter: React.FC = () => {
             <Route path="/schedule" element={<Schedules />} />
 
 
-            <Route path="/note" element={<Note />} />
+            <Route path="/note/:levelId/:subjectId" element={<Note />} />
 
             <Route path="/room" element={<Room />} />
             <Route path="/createroom" element={<CreateRoom />} />

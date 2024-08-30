@@ -6,157 +6,129 @@ import React, {
 
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
-import {
-  confirmDialog,
-  ConfirmDialog,
-} from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
-import {
-  FaEdit,
-  FaExternalLinkAlt,
-} from 'react-icons/fa';
-import { MdDeleteSweep } from 'react-icons/md';
-import {
-  Link,
-  useNavigate,
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import axiosInstance from '../auth/axios';
 
 export default function Note() {
-    const [customers, setCustomers] = useState([]);
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(30);
-    const [totalPages, setTotalPages] = useState<number>(10);
-    const navigate = useNavigate();
-    const toast = useRef<Toast>(null);
-    const [levelId, setlevelId] = useState<string | null>(null);
-  
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get(`/level?page=${page}&limit=${limit}`);
-          setData(response.data);
-      
-      } catch (error) {
-        console.log(error);
-        setError('Failed to fetch data');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchData();
-    }, [page, limit]);
-  
-    const handleDelete = async (levelId: string) => {
-      if (levelId) {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notes, setNotes] = useState<{ [userId: string]: string }>({});
+  const toast = useRef<Toast>(null);
+  const { levelId, subjectId } = useParams();
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(30);
+  const [error, setError] = useState<string | null>(null);
+  const [subject, setSubject] = useState<any>(null);
+
+  // Fetch subject details
+  useEffect(() => {
+    if (subjectId) {
+      const fetchSubject = async () => {
         try {
-          await axiosInstance.delete(`/level/delete/${levelId}`);
-          setData(prevData => prevData.filter(item => item.levelId !== levelId));
-          fetchData()
-          toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
+          const response = await axiosInstance.get(`/subject/getOne/${subjectId}`);
+          setSubject(response.data);
         } catch (error) {
-          console.error('Error deleting student:', error);
-          setError(`Error deleting document with ID ${levelId}: ${JSON.stringify(error, null, 2)}`);
+          console.error('Error fetching subject:', error);
         }
+      };
+      fetchSubject();
+    }
+  }, [subjectId]);
+
+  // Fetch students and their notes
+  const fetchData = async () => {
+    try {
+      if (!levelId) {
+        throw new Error('Level ID is missing');
       }
-    };
-  
-    const confirmDelete = (levelId: string) => {
-      confirmDialog({
-        message: 'Are you sure you want to delete this student?',
-        header: 'Confirmation',
-        icon: 'pi pi-exclamation-triangle',
-        accept: ()=> handleDelete(levelId),
-        reject: () => {
-          setlevelId(null);
-          toast.current?.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+
+      // Fetch students based on levelId
+      const usersUrl = `${import.meta.env.VITE_API_URL}/users?page=${page}&limit=${limit}&role=STUDENT&level=${levelId}`;
+      const response = await axiosInstance.get(usersUrl);
+      setData(response.data);
+
+      // Fetch notes based on subjectId and levelId
+      const notesUrl = `/note`;
+      const notesResponse = await axiosInstance.get(notesUrl);
+      const notesData = notesResponse.data.reduce((acc: any, note: any) => {
+        acc[note.user.userId] = note.note;
+        return acc;
+      }, {});
+      setNotes(notesData);
+    } catch (error) {
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit, levelId, subjectId]);
+
+  // Save a note for a user
+  const handleSaveNote = async (userId: string) => {
+    if (!subjectId || !levelId) {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Subject ID or Level ID is missing' });
+      return;
+    }
+
+    try {
+      const note = notes[userId];
+      await axiosInstance.post('/note', {
+        userId,
+        subjectId,
+        note,
+        levelId, // Ensure that levelId is included in the request
       });
-    };
-  
-    const handlePageChange = (newPage: number) => {
-      setPage(newPage);
-    };
-  
-    const handleClick = (levelId: string) => {
-      navigate(`/updatelevel/${levelId}`);
-    };
-  
-    const handleClickShow = (userId: string) => {
-      navigate(`/showUser/${userId}`);
-    };
-  
-    const actionBodyTemplate = (rowData: any) => {
-      return (
-        <React.Fragment>
-    <Button
-            onClick={() => handleClick(rowData.levelId)}
-            style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
-          >
-            <FaEdit className="text-blue-500" />
-          </Button>
-          <Button
-            onClick={() => confirmDelete(rowData.levelId)}
-            style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
-          >
-            <MdDeleteSweep className="text-red-500" />
-          </Button>
-        
-        </React.Fragment>
-      );
-    };
-    const linkVoirStudent = (rowData:any) => {
-      return (
-        <React.Fragment>
-          <Link className='flex items-center space-x-2 hover:text-blue-500 hover:underline ' to={`/level/${rowData.levelId}`}>
-            <h1 className=''>Voir List</h1> 
-            <FaExternalLinkAlt />
-            </Link>
-           
-  
-        </React.Fragment>
-      );
-    };
-    const linkVoirSchedule = (rowData:any) => {
-      return (
-        <React.Fragment>
-          <Link className='flex items-center space-x-2 hover:text-blue-500 hover:underline ' to={`/level/${rowData.levelId}`}>
-            <h1 className=''>Voir Schedule</h1> 
-            <FaExternalLinkAlt />
-            </Link>
-           
-  
-        </React.Fragment>
-      );
-    };
-    return (
-      <div className="card rounded-md m-6 min-w-full ">
-        <Toast ref={toast} />
-        <ConfirmDialog />
-        <div className=' flex justify-between pr-10'>
-          <h3 className='text-3xl m-6'>
-            List Levels
-          </h3>
-          <Link to="/createlevel">
-            <Button label="Create Level" className="m-3 p-button-success" />
-          </Link>
-        </div>
-        <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} paginatorClassName="" className="!min-w-max" >
-        <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
-          <Column field="name" header=" Name"></Column>
-          <Column body={linkVoirStudent}  header=" List de Etudiant"></Column>
-          <Column  body={linkVoirSchedule} header=" Schedule"></Column>
-  
-          <Column header="Action" body={actionBodyTemplate}></Column>
-        </DataTable>
-        {error && <div className="p-error">{error}</div>}
+      toast.current?.show({ severity: 'success', summary: 'Note Added', detail: `Note for ${userId} added successfully` });
+
+      // Optionally update the notes state to reflect the newly added note immediately
+      setNotes(prevNotes => ({
+        ...prevNotes,
+        [userId]: note,
+      }));
+    } catch (error) {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to add note' });
+    }
+  };
+
+  const noteEditor = (rowData: any) => (
+    <div className="p-inputgroup">
+      <InputText
+        value={notes[rowData.userId] || ''}
+        onChange={(e) => handleNoteChange(rowData.userId, e.target.value)}
+        placeholder="Enter Note"
+      />
+      <Button label="Save" icon="pi pi-check" onClick={() => handleSaveNote(rowData.userId)} />
+    </div>
+  );
+
+  const handleNoteChange = (userId: string, note: string) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [userId]: note,
+    }));
+  };
+
+  return (
+    <div className="card rounded-md m-6">
+      <Toast ref={toast} />
+      <div className='flex justify-between pr-10'>
+        <h3 className='text-3xl m-6'>
+          List of Students in {subject?.name || 'Loading...'} of level {data.length > 0 ? data[0].level.name : 'Loading...'}
+        </h3>
       </div>
-    );
-  }
-  
+      <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} loading={loading} showGridlines>
+        <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
+        <Column field="lastName" header="Last Name"></Column>
+        <Column field="firstName" header="First Name"></Column>
+        <Column header="Note" body={noteEditor}></Column>
+      </DataTable>
+    </div>
+  );
+}

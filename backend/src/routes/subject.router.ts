@@ -9,6 +9,8 @@ const routes = express.Router();
 routes.post("/",authenticateToken, subjectController.create);
 routes.get("/getOne/:id",authenticateToken, subjectController.get);
 routes.get("/",authenticateToken, subjectController.getSubjects);
+routes.get("/getLevelsForSubject",authenticateToken, subjectController.getAllSubjectsWithLevels);
+
 routes.put("/update/:id",authenticateToken, subjectController.update);
 routes.delete("/delete/:id",authenticateToken, subjectController.delete);
 

@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -12,7 +13,7 @@ import { BaseEntity } from './baseEntity';
 import Calendar from './calendar';
 import { CalendarItems } from './calendarItems';
 import { School } from './school';
-// import { Student } from './student';
+import { Subject } from './subject';
 import { User } from './user';
 
 @Entity("level")
@@ -22,36 +23,21 @@ export class Level extends BaseEntity {
 
   @Column({ type: "varchar", length: 128, nullable: true })
   name!: string;
+
   @ManyToOne(() => School, { nullable: true })
   @JoinColumn({ name: "schoolId" })
   school!: School;
-  
-
-  // @Index()
-  // @OneToOne(() => Schedule, { nullable: true })
-  // @JoinColumn({ name: "scheduleId" })
-  // schedule!: Schedule;
- 
-  // @RelationId((level: Level) => level.schedule)
-  // scheduleId!: string;
 
   @OneToOne(() => Calendar, calendar => calendar.level, { nullable: true })
   calendar!: Calendar;
-  
+
   @OneToMany(() => User, user => user.level)
   users!: User[];
 
-  
   @OneToMany(() => CalendarItems, calendarItems => calendarItems.level)
   calendarItems!: CalendarItems[];
 
-  // @OneToMany(() => Student, students => students.level)
-  // students!: User[];
-
-  
-
-
-  
-
-
+  // Many-to-Many relationship with Subject using the Level_subject join table
+  @ManyToMany(() => Subject, subject => subject.levelSubjects)
+  subjects!: Subject[];
 }

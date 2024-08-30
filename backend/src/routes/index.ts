@@ -3,6 +3,7 @@ import express from 'express';
 import calendarRouter from './calendar.router';
 import calendarItemRouter from './calendarItem.router';
 import levelRouter from './level.router';
+import noteRouter from './note.router';
 import roomRouter from './room.router';
 import scheduleRouter from './schedule.router';
 import schoolRouter from './school.router';
@@ -25,6 +26,7 @@ router.use('/subject', subjectRouter)
 router.use('/level', levelRouter)
 router.use('/schedule', scheduleRouter)
 router.use('/calendar', calendarRouter)
+router.use('/note', noteRouter)
 
 
 

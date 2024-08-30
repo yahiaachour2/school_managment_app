@@ -6,9 +6,7 @@ import {
 } from 'typeorm';
 
 import { BaseEntity } from './baseEntity';
-import { Level } from './level';
 import { Room } from './room';
-import { Subject } from './subject';
 
 @Entity("schedule")
 export class Schedule extends BaseEntity {
@@ -46,8 +44,8 @@ export class Schedule extends BaseEntity {
   // levels!: Level[];
   
 
-  @OneToMany(() => Subject, subject => subject.schedule) 
-  subjects!: Level[];
+  // @OneToMany(() => Subject, subject => subject.schedule) 
+  // subjects!: Level[];
 
 
   // @OneToMany(() => User, user => user.schedule) 

@@ -2,47 +2,39 @@ import {
   Column,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 
 import { BaseEntity } from './baseEntity';
 import { CalendarItems } from './calendarItems';
-import { Schedule } from './schedule';
+import { Level } from './level';
+import { User_subject } from './user_subject';
+import { UserSubjectNote } from './userSubjectNote ';
 
 @Entity("subject")
 export class Subject extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   subjectId!: string;
+
   @Index()
   @Column({ type: "varchar", length: 128, nullable: true })
   name!: string;
 
-  // @Index()
-  // @ManyToOne(() => Schedule, { nullable: false })
-  // @JoinColumn({ name: "scheduleId" })
-  // schedule!: Schedule;
-  // @RelationId((subject: Subject) => subject.schedule)
-  // scheduleId!: string
-  // @Column({ nullable: true })
-  // scheduleId!: string;
-
   @Column({ type: "varchar", length: 128, nullable: true })
   coefficient!: string;
 
-  
-@Index()
-@ManyToOne(() => Schedule, { nullable: true })
-@JoinColumn({ name: "scheduleId" })
-schedule!: Schedule;
+  @OneToMany(() => CalendarItems, calendarItems => calendarItems.subject)
+  calendarItems!: CalendarItems[];
 
-@RelationId((subject: Subject) => subject.schedule)
-scheduleId!: string;
+  @OneToMany(() => User_subject, userSubject => userSubject.subject)
+  userSubjects!: User_subject[];
 
-@OneToMany(() => CalendarItems, calendarItems => calendarItems.subject)
-calendarItems!: CalendarItems[];
-  
+  // Many-to-Many relationship with Level using the Level_subject join table
+  @ManyToMany(() => Level, level => level.subjects)
+  levelSubjects!: Level[];
+
+  @OneToMany(() => UserSubjectNote, userSubjectNote => userSubjectNote.subject)
+  userSubjectNotes!: UserSubjectNote[];
 }

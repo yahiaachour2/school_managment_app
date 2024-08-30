@@ -89,7 +89,7 @@ const Sidebar = () => {
 
   return (
     <div className="flex">
-      <div className={`bg-gray-50 relative p-5 text-white h-screen ease-in-out duration-300 w-28 ${
+      <div className={`bg-gray-100 relative p-5 text-white h-screen ease-in-out duration-300 w-28 ${
         open ? "w-64" : "translate-x-0"
       }`}>
         <IoIosArrowDropleftCircle
