@@ -1,3 +1,5 @@
+import 'react-toastify/dist/ReactToastify.css';
+
 import React, {
   ChangeEvent,
   FormEvent,
@@ -10,6 +12,10 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
+import {
+  toast,
+  ToastContainer,
+} from 'react-toastify';
 
 import axiosInstance from '../auth/axios';
 import { Level } from '../types/level';
@@ -34,18 +40,18 @@ const CreateStudent = () => {
   const [levels, setLevels] = useState<Level[]>([]);
   const [parents, setParents] = useState<any[]>([]);
   const [schedule, setschedule] = useState<any[]>([]);
-
+  
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchLevelsAndParents = async () => {
       try {
-        const [levelsResponse, parentsResponse,] = await Promise.all([
+        const [levelsResponse, parentsResponse] = await Promise.all([
           axiosInstance.get('http://localhost:3000/level'),
-          axiosInstance.get('http://localhost:3000/users?role=PARENT'), 
+          axiosInstance.get('http://localhost:3000/users?role=PARENT'),
         ]);
         setLevels(levelsResponse.data);
         setParents(parentsResponse.data);
-
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
       }
@@ -74,15 +80,7 @@ const CreateStudent = () => {
       }));
     }
   };
-  // const handleScheduleChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
-  //   if (selectedOption) {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       scheduleId: selectedOption.value,
-  //       scheduleName: selectedOption.label
-  //     }));
-  //   }
-  // };
+
   const handleParentChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
     if (selectedOption) {
       setFormData((prevState) => ({
@@ -102,14 +100,37 @@ const CreateStudent = () => {
     }
   };
 
+  const validateForm = () => {
+    if (!formData.lastName || !formData.firstName || !formData.email || !formData.password || !formData.levelId || !formData.parentId || !formData.phone) {
+      return 'Please fill out all required fields.';
+    }
+    if (!formData.email.includes('@')) {
+      return 'Please enter a valid email address.';
+    }
+    if (formData.phone.length < 10) {
+      return 'Phone number must be at least 10 digits long.';
+    }
+    return '';
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    
+    setError('');
+    
     try {
       await axiosInstance.post('http://localhost:3000/users/', formData);
+      toast.success('Student created successfully!');
       navigate('/students');
     } catch (error) {
       setError('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     }
   };
 
@@ -122,6 +143,7 @@ const CreateStudent = () => {
 
   return (
     <div className="flex flex-col bg-white w-full max-w-4xl mx-auto rounded-2xl p-10 m-6">
+      <ToastContainer />
       <div className="flex justify-center mb-5">
         <h2 className="text-xl font-bold">Create Student</h2>
       </div>
@@ -197,7 +219,7 @@ const CreateStudent = () => {
           />
         </div>
         {/* <div className="col-span-1">
-            <label htmlFor="schedule" className="block mb-2 text-sm font-medium text-gray-900">schedule:</label>
+            <label htmlFor="schedule" className="block mb-2 text-sm font-medium text-gray-900">Schedule:</label>
             <Select
               options={schedule.map(schedule => ({ value: schedule.scheduleId , label: `${schedule.scheduleName}`}))}
               onChange={handleScheduleChange}

@@ -96,13 +96,13 @@ export default function Room() {
             onClick={() => handleClick(rowData.roomId)}
             style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
           >
-            <FaEdit className="text-blue-500" />
+            <FaEdit className="text-blue-500 size-5" />
           </Button>
           <Button
             onClick={() => confirmDelete(rowData.roomId)}
             style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
           >
-            <MdDeleteSweep className="text-red-500" />
+            <MdDeleteSweep className="text-red-500 size-5" />
           </Button>
         
         </React.Fragment>

@@ -23,7 +23,7 @@ const transformUser = (userData: any) => {
   return {
     ...userData,
     userId: userData.userId,
-    parentName: `${userData?.parent?.firstName} ${userData?.parent?.lastName}`,
+    parentName: `${userData?.parent?.firstName || ''} ${userData?.parent?.lastName || ''}`,
     gender: userData.gender || '',
   };
 };
@@ -49,7 +49,6 @@ function StudentUpdate() {
   const [fullSearchText, setFullSearchText] = useState('');
   const [levels, setLevels] = useState<FormatedLevelResponse[]>([]);
   const [parents, setParents] = useState<any[]>([]);
-  const [schedule, setSchedule] = useState<any[]>([]);
   const navigate = useNavigate();
   const params = useParams<{ userId: string }>();
 
@@ -57,7 +56,6 @@ function StudentUpdate() {
     const fetchDocument = async () => {
       try {
         const response = await axiosInstance.get(`http://localhost:3000/users/${params.userId}`);
-
         const transformedUser = transformUser(response.data.users);
         setFormData((prevState) => ({
           ...prevState,
@@ -91,13 +89,6 @@ function StudentUpdate() {
           value: level.levelId,
         })));
         setParents(parentsResponse.data);
-        // setSchedule(scheduleResponse.data.map((schedule: Schedule) =>{
-        //   if (schedule){
-        //   return {label: schedule.scheduleName, value: schedule.scheduleId}
-        // } else {
-        //   return {label: '', value: ''}
-        // }
-        // }));
       } catch (error) {
         console.error('Error fetching levels and parents:', error);
       }
@@ -110,28 +101,17 @@ function StudentUpdate() {
     setFullSearchText(inputValue);
   };
 
-  // const handleScheduleChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
-  //   if (selectedOption) {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       scheduleId: selectedOption.value,
-  //       scheduleName: selectedOption.label,
-  //     }));
-  //   }
-  // };
-
   const handleSelectChange = (selectedOption: SingleValue<{ value: string; label: string }>) => {
-    if (!selectedOption) {
-      return;
-    }
-    setFormData((prevState) => ({
-      ...prevState,
-      levelId: selectedOption.value,
-      level: {
+    if (selectedOption) {
+      setFormData((prevState) => ({
+        ...prevState,
         levelId: selectedOption.value,
-        name: selectedOption.label,
-      },
-    }));
+        level: {
+          levelId: selectedOption.value,
+          name: selectedOption.label,
+        },
+      }));
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -167,10 +147,6 @@ function StudentUpdate() {
       ...provided,
       width: '100%',
     }),
-  };
-
-  const formatedLevel = (levels: Level[]): FormatedLevelResponse[] => {
-    return levels.map((level: Level) => ({ value: level.levelId, label: level.name }));
   };
 
   return (
@@ -227,13 +203,12 @@ function StudentUpdate() {
             required
           />
         </div>
-        
         <div className="col-span-1">
           <label htmlFor="levelId" className="block mb-2 text-sm font-medium text-gray-900">Level:</label>
           <Select
             onChange={handleSelectChange}
             onInputChange={handleSearch}
-            value={levels.find(level => level.value === formData?.level?.levelId) || null}
+            value={levels.find(level => level.value === formData.levelId) || null}
             options={levels}
             styles={customStyles}
             className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
@@ -250,12 +225,11 @@ function StudentUpdate() {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
         </div>
-        
         <div className="col-span-1">
           <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900">Gender:</label>
           <Select
             onChange={handleGenderChange}
-            value={{ label: formData.gender, value: formData.gender }}
+            value={formData.gender ? { label: formData.gender, value: formData.gender } : null}
             options={[
               { label: 'MAN', value: 'MAN' },
               { label: 'WOMAN', value: 'WOMAN' },
@@ -276,7 +250,6 @@ function StudentUpdate() {
             required
           />
         </div>
-     
         <div className="col-span-2 flex justify-end gap-4">
           <button
             type="submit"

@@ -99,13 +99,13 @@ export default function Level() {
           onClick={() => handleClick(rowData.levelId)}
           style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
         >
-          <FaEdit className="text-blue-500" />
+          <FaEdit className="text-blue-500 size-5" />
         </Button>
         <Button
           onClick={() => confirmDelete(rowData.levelId)}
           style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
         >
-          <MdDeleteSweep className="text-red-500" />
+          <MdDeleteSweep className="text-red-500 size-5" />
         </Button>
       
       </React.Fragment>

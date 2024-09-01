@@ -21,4 +21,5 @@ export interface Student {
   phone: string;
   level: Level;
   parent: Parent;
+  userId: string;
 }

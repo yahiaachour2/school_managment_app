@@ -13,6 +13,7 @@ import {
 import CreateAdmin from './component/AdminCreate';
 import AdminShow from './component/AdminShow';
 import AdminUpdate from './component/AdminUpdate';
+import CalendarAbsenceForstudent from './component/CalendarAbsenceForStudent';
 import CreateLevel from './component/LevelCreate';
 import LevelUpdate from './component/LevelUpdate';
 import LisreVoirStudentt from './component/LevelVoirStudent';
@@ -29,6 +30,7 @@ import CreateStudent from './component/StudentCreate';
 import StudentShow from './component/StudentShow';
 import StudentUpdate from './component/StudentUpdate';
 import CreateSubject from './component/SubjectCreate';
+import SubjectForStudent from './component/SubjectForStudent';
 import SubjectUpdate from './component/SubjectUpate';
 import CreateTeacher from './component/teacherCreate';
 import UpdateTeacher from './component/teacherUpdate';
@@ -69,6 +71,7 @@ const AppRouter: React.FC = () => {
             <Route path="/updateUser/:userId" element={<StudentUpdate />} />
             <Route path="/showUser/:userId" element={<StudentShow />} />
             <Route path="/schedule/student/:userId" element={<ScheduleForStudent />} />
+            <Route path="/calendar/student/:userId" element={<CalendarAbsenceForstudent />} />
 
 
             <Route path="/login" element={<Login />} />
@@ -111,6 +114,7 @@ const AppRouter: React.FC = () => {
             <Route path="/subject" element={<Subject />} />
             <Route path="/createsubject" element={<CreateSubject />} />
             <Route path="/updatesubject/:subjectId" element={<SubjectUpdate />} />
+            <Route path="/subjectforstudent" element={<SubjectForStudent />} />
             
             
 

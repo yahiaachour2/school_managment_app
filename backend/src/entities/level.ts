@@ -15,6 +15,7 @@ import { CalendarItems } from './calendarItems';
 import { School } from './school';
 import { Subject } from './subject';
 import { User } from './user';
+import { UserSubjectNote } from './userSubjectNote ';
 
 @Entity("level")
 export class Level extends BaseEntity {
@@ -40,4 +41,7 @@ export class Level extends BaseEntity {
   // Many-to-Many relationship with Subject using the Level_subject join table
   @ManyToMany(() => Subject, subject => subject.levelSubjects)
   subjects!: Subject[];
+
+  @OneToMany(() => UserSubjectNote, userSubjectNote => userSubjectNote.level)
+  userSubjectNotes!: UserSubjectNote[];
 }

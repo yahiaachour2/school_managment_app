@@ -14,7 +14,7 @@ import {
 import {
   hashPassword,
   isEmailValid,
-  isNumberValid,
+  phoneRegex,
 } from '../helpers';
 import { dataSource } from '../ormconfig';
 import {
@@ -57,9 +57,10 @@ export class UserService {
         throw new BadParametersError(["email"]);
       }
 
-      // Validate phone
-      if (!isNumberValid(phone)) {
-        throw new BadParametersError(["phone"]);
+      
+      // Validate phone number
+      if (!phoneRegex.test(phone)) {
+        throw new BadParametersError(["phoneNumber"]);
       }
 
       const userRole: UserRoles = role as UserRoles;
@@ -268,11 +269,15 @@ export class UserService {
       const updatedUser = Object.assign(new User(), {
         ...user,
         ...input,
+        password: hashPassword(password),
+
       });
 
       console.log({
         ...user,
         ...input,
+        password: hashPassword(password),
+
         level: { levelId },
       });
 

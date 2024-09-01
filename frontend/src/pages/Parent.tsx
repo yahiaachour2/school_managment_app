@@ -62,10 +62,10 @@ export default function Parent() {
         await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/users/${userId}`);
         setData(prevData => prevData.filter(item => item.userId !== userId));
         // fetchData('PARENT'); // Fetch students after deletion
-        toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
+        toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Parent deleted', life: 3000 });
       } catch (error) {
-        console.error('Error deleting student:', error);
-        setError(`Error deleting document with ID ${userId}: ${JSON.stringify(error, null, 2)}`);
+        console.error('Error deleting Parent:', error);
+        setError(`Error deleting Parent with ID ${userId}: ${JSON.stringify(error, null, 2)}`);
       }
     }
   };
@@ -100,19 +100,19 @@ export default function Parent() {
           onClick={() => handleClick(rowData.userId)}
           style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
         >
-          <FaEdit className="text-blue-500" />
+          <FaEdit className="text-blue-500 size-5" />
         </Button>
         <Button
           onClick={() => handleClickShow(rowData.userId)}
           style={{ color: 'green', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
         >
-          <IoEyeSharp className="text-green-500" />
+          <IoEyeSharp className="text-green-500 size-5" />
         </Button>
         <Button
           onClick={() => confirmDelete(rowData.userId)}
           style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
         >
-          <MdDeleteSweep className="text-red-500" />
+          <MdDeleteSweep className="text-red-500 size-5" />
         </Button>
       </React.Fragment>
     );

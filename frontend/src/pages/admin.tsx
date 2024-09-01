@@ -101,19 +101,19 @@ export default function Admin() {
             onClick={() => handleClick(rowData.userId)}
             style={{ color: 'blue', backgroundColor: 'transparent', padding: "0.2rem ", border: 'none' }}
           >
-            <FaEdit className="text-blue-500" />
+            <FaEdit className="text-blue-500 size-5" />
           </Button>
           <Button
             onClick={() => handleClickShow(rowData.userId)}
             style={{ color: 'green', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
           >
-            <IoEyeSharp className="text-green-500" />
+            <IoEyeSharp className="text-green-500 size-5" />
           </Button>
           <Button
             onClick={() => confirmDelete(rowData.userId)}
             style={{ color: 'red', backgroundColor: 'transparent', border: 'none', padding: "0.2rem " }}
           >
-            <MdDeleteSweep className="text-red-500" />
+            <MdDeleteSweep className="text-red-500 size-5" />
           </Button>
         </React.Fragment>
       );

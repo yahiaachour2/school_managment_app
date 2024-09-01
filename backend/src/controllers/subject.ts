@@ -45,16 +45,14 @@ export class SubjectController {
   async getAllSubjectsWithLevels(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 330;
-      const subjectId = req.query.subjectId as string;
+      const limit = parseInt(req.query.limit as string) || 10; // Adjust limit as needed
       const levelId = req.query.levelId as string;
-
   
-      const subjects = await subjectService.getAllSubjectsWithLevels(page, limit,levelId);
+      const subjects = await subjectService.getAllSubjectsWithLevels(page, limit, levelId);
   
       return res.status(200).json(subjects);
     } catch (error: any) {
-      return res.status(error?.httpStatusCode || 500).send(error);
+      return res.status(error?.httpStatusCode || 500).send(error.message || 'Internal Server Error');
     }
   }
   async update(req: Request, res: Response) {

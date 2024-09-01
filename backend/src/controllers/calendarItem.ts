@@ -51,8 +51,10 @@ export class CalendarItemController {
           const limit = parseInt(req.query.limit as string) || 20;
           const searchType = req.query.type as string;
           const userId = req.query.userId as string;
+          const eventType = req.query.eventType as string;
+
       
-          const calendars = await calendarItemService.getCalendarsItems(page, limit, searchType, userId);
+          const calendars = await calendarItemService.getCalendarsItems(page, limit, searchType, userId,eventType);
       
           return res.status(200).json(calendars);
         } catch (error: any) {

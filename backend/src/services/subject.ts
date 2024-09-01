@@ -128,42 +128,52 @@ export class SubjectService {
 
     return  Subjects
   }
-  async getAllSubjectsWithLevels(page: number, limit: number, levelId?: string) {
-    const levelSubjectRepository = dataSource.getRepository(Level_subject);
-  
-    const query = levelSubjectRepository.createQueryBuilder('levelSubject')
-      .leftJoinAndSelect('levelSubject.level', 'level')
-      .leftJoinAndSelect('levelSubject.subject', 'subject')
-      .take(limit)
-      .skip((page - 1) * limit);
-  
-    // Add a filter by levelId if it exists
-    if (levelId) {
-      query.where('levelSubject.levelId = :levelId', { levelId });
-    }
-  
-    const levelSubjects = await query.getMany();
-  
-    // Group the subjects with their associated levels
-    const subjectsMap = new Map<string, { subject: any, levels: any[] }>();
-  
-    levelSubjects.forEach(levelSubject => {
-      const subjectId = levelSubject.subject.subjectId;
-      if (!subjectsMap.has(subjectId)) {
-        subjectsMap.set(subjectId, {
-          subject: levelSubject.subject,
-          levels: [],
-        });
-      }
-      subjectsMap.get(subjectId)?.levels.push(levelSubject.level);
-    });
-  
-    // Convert the Map to an array of subjects with levels
-    const subjectsWithLevels = Array.from(subjectsMap.values());
-  
-    return subjectsWithLevels;
+  // Service method to get all subjects with their associated levels
+async getAllSubjectsWithLevels(page: number, limit: number, levelId?: string) {
+  const levelSubjectRepository = dataSource.getRepository(Level_subject);
+
+  // Create a query builder for Level_subject with necessary joins and selects
+  let query = levelSubjectRepository.createQueryBuilder('levelSubject')
+    .leftJoinAndSelect('levelSubject.level', 'level')
+    .leftJoinAndSelect('levelSubject.subject', 'subject')
+    .select(['subject.subjectId', 'subject.name', 'level.levelId', 'level.name']);
+
+  // Add a filter by levelId if it exists
+  if (levelId) {
+    query = query.where('levelSubject.levelId = :levelId', { levelId });
   }
-  
+
+  // Implement pagination
+  query = query.skip((page - 1) * limit).take(limit);
+
+  // Execute the query and get the raw results
+  const levelSubjects = await query.getRawMany();
+
+  // Group subjects with their associated levels
+  const subjectsMap = new Map<string, { subject: any, levels: any[] }>();
+
+  levelSubjects.forEach(levelSubject => {
+    const subjectId = levelSubject.subject_subjectId;
+    if (!subjectsMap.has(subjectId)) {
+      subjectsMap.set(subjectId, {
+        subject: {
+          subjectId: levelSubject.subject_subjectId,
+          name: levelSubject.subject_name,
+        },
+        levels: [],
+      });
+    }
+    subjectsMap.get(subjectId)?.levels.push({
+      levelId: levelSubject.level_levelId,
+      name: levelSubject.level_name,
+    });
+  });
+
+  // Convert the Map to an array of subjects with levels
+  const subjectsWithLevels = Array.from(subjectsMap.values());
+
+  return subjectsWithLevels;
+}
   
   async update(input: updateSubjectInput) {
     const { id: subjectId, name, coefficient, userId, levelId } = input;

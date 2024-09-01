@@ -13,7 +13,7 @@ import {
   Link,
   useNavigate,
 } from 'react-router-dom';
-import Select, { SingleValue } from 'react-select';
+import { SingleValue } from 'react-select';
 
 import axiosInstance from '../auth/axios';
 import { Level } from '../types/level';
@@ -58,14 +58,14 @@ export default function Subject() {
 
   const nameBodyTemplate = (rowData: any) => {
     return (
-      <div>
+      <div className='flex space-x-3'>
         {rowData.levels?.map((level: Record<string, any>, index: number) =>
  <Link
  key={index}
  className='flex items-center space-x-2 hover:text-blue-500 hover:underline'
  to={`/note/${level.levelId}/${rowData.subjectId}`}
 >
- <h1 className=''>{level.name}</h1>
+ <h1 className='  '>{level.name}</h1>
  <FaExternalLinkAlt />
 </Link>
         )}
@@ -83,7 +83,7 @@ export default function Subject() {
         </Link>
       </div>
 
-      <div className="flex m-4 justify-evenly space-x-10">
+      {/* <div className="flex m-4 justify-evenly space-x-10">
         <div className="w-1/2">
           <h3> Level:</h3>
           <Select
@@ -93,7 +93,7 @@ export default function Subject() {
             className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
           />
         </div>
-      </div>
+      </div> */}
 
       <DataTable
         value={data}

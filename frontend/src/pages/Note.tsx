@@ -16,51 +16,43 @@ import axiosInstance from '../auth/axios';
 export default function Note() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [notes, setNotes] = useState<{ [userId: string]: string }>({});
   const toast = useRef<Toast>(null);
   const { levelId, subjectId } = useParams();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(30);
   const [error, setError] = useState<string | null>(null);
   const [subject, setSubject] = useState<any>(null);
+  const [level, setLevel] = useState<any>(null);
 
-  // Fetch subject details
   useEffect(() => {
-    if (subjectId) {
-      const fetchSubject = async () => {
-        try {
+    const fetchSubject = async () => {
+      try {
+        if (subjectId) {
           const response = await axiosInstance.get(`/subject/getOne/${subjectId}`);
           setSubject(response.data);
-        } catch (error) {
-          console.error('Error fetching subject:', error);
         }
-      };
-      fetchSubject();
-    }
-  }, [subjectId]);
+        if (levelId) {
+          const response = await axiosInstance.get(`/level/getOne/${levelId}`);
+          setLevel(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching subject or level:', error);
+        setError('Failed to fetch subject or level data');
+      }
+    };
+    fetchSubject();
+  }, [subjectId, levelId]);
 
-  // Fetch students and their notes
   const fetchData = async () => {
     try {
-      if (!levelId) {
-        throw new Error('Level ID is missing');
-      }
-
-      // Fetch students based on levelId
-      const usersUrl = `${import.meta.env.VITE_API_URL}/users?page=${page}&limit=${limit}&role=STUDENT&level=${levelId}`;
-      const response = await axiosInstance.get(usersUrl);
+      if (!levelId || !subjectId) return;
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/note`, {
+        params: { page, limit, subjectId, levelId }
+      });
       setData(response.data);
-
-      // Fetch notes based on subjectId and levelId
-      const notesUrl = `/note`;
-      const notesResponse = await axiosInstance.get(notesUrl);
-      const notesData = notesResponse.data.reduce((acc: any, note: any) => {
-        acc[note.user.userId] = note.note;
-        return acc;
-      }, {});
-      setNotes(notesData);
     } catch (error) {
-      setError('Failed to fetch data');
+      setError('Failed to fetch notes');
+      console.error('Error fetching notes:', error);
     } finally {
       setLoading(false);
     }
@@ -70,59 +62,55 @@ export default function Note() {
     fetchData();
   }, [page, limit, levelId, subjectId]);
 
-  // Save a note for a user
-  const handleSaveNote = async (userId: string) => {
-    if (!subjectId || !levelId) {
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Subject ID or Level ID is missing' });
-      return;
-    }
-
+  const handleSaveNote = async (row: any) => {
     try {
-      const note = notes[userId];
-      await axiosInstance.post('/note', {
-        userId,
-        subjectId,
-        note,
-        levelId, // Ensure that levelId is included in the request
-      });
-      toast.current?.show({ severity: 'success', summary: 'Note Added', detail: `Note for ${userId} added successfully` });
+      const { userId, note, noteId } = row;
+      if (!note) throw new Error('Note is required');
 
-      // Optionally update the notes state to reflect the newly added note immediately
-      setNotes(prevNotes => ({
-        ...prevNotes,
-        [userId]: note,
-      }));
-    } catch (error) {
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to add note' });
+      if (noteId) {
+        // Update existing note
+        await axiosInstance.put(`/note/${noteId}`, { note, userId });
+        toast.current?.show({ severity: 'success', summary: 'Note Updated', detail: 'Note updated successfully' });
+      } else {
+        // Create new note
+        if (!subjectId || !levelId) throw new Error('Subject ID and Level ID are required for creating a note');
+        await axiosInstance.post('/note', { userId, subjectId, note, levelId });
+        toast.current?.show({ severity: 'success', summary: 'Note Added', detail: 'Note added successfully' });
+      }
+
+      fetchData(); // Refresh data
+    } catch (error: any) {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: error.message || 'Failed to save note' });
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, rowData: any) => {
+    const { value } = e.target;
+    setData(prevData =>
+      prevData.map(item => item.userId === rowData.userId ? { ...item, note: value } : item)
+    );
   };
 
   const noteEditor = (rowData: any) => (
     <div className="p-inputgroup">
       <InputText
-        value={notes[rowData.userId] || ''}
-        onChange={(e) => handleNoteChange(rowData.userId, e.target.value)}
+        value={rowData.note || ''}
+        onChange={(e) => handleChange(e, rowData)}
         placeholder="Enter Note"
       />
-      <Button label="Save" icon="pi pi-check" onClick={() => handleSaveNote(rowData.userId)} />
+      <Button label="Save" icon="pi pi-check" onClick={() => handleSaveNote(rowData)} />
     </div>
   );
-
-  const handleNoteChange = (userId: string, note: string) => {
-    setNotes(prevNotes => ({
-      ...prevNotes,
-      [userId]: note,
-    }));
-  };
 
   return (
     <div className="card rounded-md m-6">
       <Toast ref={toast} />
       <div className='flex justify-between pr-10'>
         <h3 className='text-3xl m-6'>
-          List of Students in {subject?.name || 'Loading...'} of level {data.length > 0 ? data[0].level.name : 'Loading...'}
+          List of Students in {subject?.name || 'Loading...'} of level {level?.name || 'Loading...'}
         </h3>
       </div>
+      {error && <div className="p-error">{error}</div>}
       <DataTable value={data} paginator rows={50} rowsPerPageOptions={[5, 10, 25, 50]} loading={loading} showGridlines>
         <Column field="index" header="No" body={(data, options) => (page - 1) * limit + options.rowIndex + 1}></Column>
         <Column field="lastName" header="Last Name"></Column>

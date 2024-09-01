@@ -100,7 +100,7 @@ async create(input: CreateCalendarItemInput) {
   }
 
 //calendar
-async getCalendarsItems(page: number, limit: number, searchType?: string, userId?: string) {
+async getCalendarsItems(page: number, limit: number, searchType?: string, userId?: string, eventType?: string) {
   try {
     const calendarRepository = await dataSource.getRepository(CalendarItems);
 
@@ -118,7 +118,9 @@ async getCalendarsItems(page: number, limit: number, searchType?: string, userId
     if (userId) {
       query.andWhere("student.userId = :userId", { userId });
     }
-
+    if (eventType) {
+      query.andWhere("calendarItem.eventType = :eventType", { eventType });
+    }
     const calendars = await query.getMany();
 
     return calendars;

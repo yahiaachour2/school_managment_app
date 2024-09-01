@@ -37,7 +37,8 @@ export class AuthController {
         role: user.role,
         gender: user.gender,
         level:user.level?.name,
-        children:user.userId
+        children:user.userId,
+        levelId:  user.levelId
       });
 
       // Update user's token in the database

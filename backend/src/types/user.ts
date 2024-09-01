@@ -11,7 +11,7 @@ export interface CreateUserInput {
   parentId :string ;
   levelId: string ;
   gender:UserGenders;
-  phone:number;
+  phone:string;
   
 }
 export interface GetUserInput {
