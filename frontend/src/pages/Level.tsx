@@ -59,9 +59,9 @@ export default function Level() {
         await axiosInstance.delete(`/level/delete/${levelId}`);
         setData(prevData => prevData.filter(item => item.levelId !== levelId));
         fetchData()
-        toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Student deleted', life: 3000 });
+        toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Level deleted', life: 3000 });
       } catch (error) {
-        console.error('Error deleting student:', error);
+        console.error('Error deleting Level:', error);
         setError(`Error deleting document with ID ${levelId}: ${JSON.stringify(error, null, 2)}`);
       }
     }
@@ -69,7 +69,7 @@ export default function Level() {
 
   const confirmDelete = (levelId: string) => {
     confirmDialog({
-      message: 'Are you sure you want to delete this student?',
+      message: 'Are you sure you want to delete this Level?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: ()=> handleDelete(levelId),

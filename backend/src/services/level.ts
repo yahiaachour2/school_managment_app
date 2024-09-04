@@ -161,8 +161,9 @@ export class LevelService {
       if (!level) {
         throw new LevelNotFoundError();
       }
+      level.deletedAt = new Date();
 
-      await levelRepository.remove(level);
+      await levelRepository.save(level);
       return { message: "level deleted successfully" };
     } catch (error: any) {
       throw error;

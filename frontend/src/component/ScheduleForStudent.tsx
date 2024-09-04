@@ -29,18 +29,29 @@ export const ScheduleForStudent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch the student's information to get the levelId
-        const studentResponse = await axiosInstance.get(`/users/${userId}`);
-        const student = studentResponse.data.users;
-        setStudentName(`${student.firstName} ${student.lastName}`);
-        setLevelId(student.levelId);
+        // Fetch the user's information to get the role and children
+        const userResponse = await axiosInstance.get(`/users/${userId}`);
+        const user = userResponse.data.users;
+
+        // Set the student name (can be either parent or student)
+        setStudentName(`${user.firstName} ${user.lastName}`);
+
+        // Determine the levelId based on the role
+        let levelIdToUse = user.levelId;
+
+        if (user.role === 'PARENT' && user.children.length > 0) {
+          // If the user is a parent, use the levelId of the first child
+          levelIdToUse = user.children[0].levelId;
+        }
+
+        setLevelId(levelIdToUse);
 
         // Fetch the events based on the levelId
-        if (student.levelId) {
+        if (levelIdToUse) {
           const eventsResponse = await axiosInstance.get(`/calendaritem/`, {
             params: {
               type: 'SCHEDULE',
-              levelId: student.levelId
+              levelId: levelIdToUse
             }
           });
 

@@ -19,7 +19,7 @@ import axiosInstance from '../auth/axios';
 const CreateRoom = () => {
   const [formData, setFormData] = useState({
     name: '',
-    schoolId: {}
+    schoolId: "4ecff5ac-db76-48df-b789-0bda659c7831"
   });
 
   const [error, setError] = useState('');
@@ -55,7 +55,6 @@ const CreateRoom = () => {
     e.preventDefault();
 
     try {
-      console.log("formdatya",formData);
       
       await axiosInstance.post('/room/', formData);
       navigate('/room');

@@ -275,8 +275,8 @@ async getAllSubjectsWithLevels(page: number, limit: number, levelId?: string) {
       if (!subject) {
         throw new SubjectNotFoundError();
       }
-
-      await subjectRepository.remove(subject);
+      subject.deletedAt = new Date();
+      await subjectRepository.save(subject);
 
       return { message: "Subject deleted successfully" };
     } catch (error: any) {
