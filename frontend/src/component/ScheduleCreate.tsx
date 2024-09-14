@@ -183,46 +183,46 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               required
             />
           </div> */}
-          <div className="col-span-2 sm:col-span-1">
-            <label
-              htmlFor="timeStart"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Start Time
-            </label>
-            <DatePicker
-              selected={start}
-              onChange={(date) => date && setStart(date)}
-              timeInputLabel="Time:"
-              selectsStart
-              startDate={start}
-              endDate={end}
-              dateFormat="MM/dd/yyyy h:mm aa"
-              showTimeInput
-              className="border-solid border-2 border-black-600 w-44"
-            />
-          </div>
-          <div className="col-span-2 h-200 sm:col-span-1">
-            <label
-              htmlFor="timeEnd"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              End Time
-            </label>
-            <DatePicker
-              selected={end}
-              onChange={(date) => date && setEnd(date)}
-              timeInputLabel="Time:"
-              selectsEnd
-              startDate={start}
-              endDate={end}
-              minDate={start}
-              dateFormat="MM/dd/yyyy h:mm aa"
-              showTimeInput
+<div className="col-span-2 sm:col-span-1">
+  <label
+    htmlFor="timeStart"
+    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+  >
+    Start Time
+  </label>
+  <DatePicker
+    selected={start}
+    onChange={(date) => date && setStart(date)}
+    showTimeSelect
+    showTimeSelectOnly
+    timeIntervals={15}
+    timeCaption="Time"
+    dateFormat="HH:mm"
+    className="border border-x-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500  rounded-lg  pl-2 pt-2 pb-2 w-44"
+  />
+</div>
 
-              className="border-solid border-2 border-black-600 w-44"
-            />
-          </div>
+<div className="col-span-2 h-200 sm:col-span-1">
+  <label
+    htmlFor="timeEnd"
+    className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+  >
+    End Time
+  </label>
+  <DatePicker
+  selected={end}
+  onChange={(date) => date && setEnd(date)}
+  timeInputLabel="Time:"
+  selectsEnd
+  showTimeSelect
+  showTimeSelectOnly
+  timeIntervals={15}
+  timeCaption="Time"
+  dateFormat="HH:mm"
+  
+  className="border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-solid rounded-lg box-border pl-2 pt-2 pb-2 w-44"
+/>
+</div>
 
           <div className="col-span-1">
             <label htmlFor="levelId" className="block mb-2 text-sm font-medium text-gray-900">
@@ -234,7 +234,7 @@ const CreateSéance: React.FC<ProductFormProps> = ({ onClose, event }) => {
               onInputChange={handleSearch}
               isSearchable={true}
               styles={customStyles}
-              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
+              className="bg-gray-50  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
             />
           </div>
           <div className="col-span-1">

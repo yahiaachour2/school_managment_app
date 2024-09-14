@@ -38,3 +38,37 @@ body {
   width: 100% !important;
 
 } */
+/* .react-datepicker__time-container .react-datepicker__time {
+  padding-right: 5px !important;
+} */
+
+.react-datepicker__time-box ul.react-datepicker__time-list{ 
+  padding-right: 5px !important;
+}
+.react-datepicker-wrapper input {
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.react-datepicker-wrapper input:focus {
+  border: 2px solid #3b82f6; /* Custom blue color */
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /* Optional shadow */
+}
+
+/* This targets the focused slot in react-big-calendar
+.rbc-timeslot-group:focus {
+  background-color: red !important; */
+/* } */
+
+/* .rbc-timeslot-group:hover {
+  transition: background-color 0.4s ease;
+  background-color: #ccc !important;
+} */
+/* .rbc-events-container{
+  margin-right: 150px !important;
+} */
+
+.rbc-time-slot:hover {
+  background-color: #e0e0e0; /* Change this color as needed */
+  cursor: pointer;
+}

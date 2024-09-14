@@ -270,27 +270,27 @@ const Schedules: React.FC = () => {
         
       </div>
 )}
-      <DnDCalendar
-        components={{
-          toolbar: () => null,
-          header: ({ date }) => <span>{days[moment(date).day()]}</span>,
-        }}
-        defaultDate={moment().toDate()}
-        events={events}
-        localizer={localizer}
-        onEventDrop={onEventDrop}
-        onEventResize={onEventResize}
-        resizable
-        selectable
-        timeslots={1}
-        step={60}
-        onDoubleClickEvent={handleEventDoubleClick}
-        onSelectSlot={handleSelectSlot}
-        style={{ height: '100vh' }}
-        view={view}
-        max={moment("2022-10-10T19:00:00").toDate()}
-        min={moment("2022-10-10T08:00:00").toDate()}
-      />
+<DnDCalendar
+  components={{
+    toolbar: () => null,
+    header: ({ date }) => <span>{days[moment(date).day()]}</span>,
+  }}
+  defaultDate={moment('2024-09-09').toDate()} // Always start from 09/09/2024
+  events={events}
+  localizer={localizer}
+  onEventDrop={onEventDrop}
+  onEventResize={onEventResize}
+  resizable
+  selectable
+  timeslots={2}
+  step={30}
+  onDoubleClickEvent={handleEventDoubleClick}
+  onSelectSlot={handleSelectSlot}
+  style={{ height: '100vh' }}
+  view={'week'} // Set the view to 'week'
+  max={moment('2024-09-16T19:00:00').toDate()} // Set the max time for that week
+  min={moment('2024-09-09T08:00:00').toDate()} // Set the min time for that week
+/>
 
       {showModal && newEvent && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">

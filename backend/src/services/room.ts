@@ -1,3 +1,4 @@
+import { CalendarItems } from '../entities/calendarItems';
 import { Room } from '../entities/room';
 import { InvalidUuidError } from '../errors';
 import {
@@ -18,9 +19,9 @@ export class RoomService {
   async findAvailableRooms(timeStart: Date, timeEnd: Date) {
     try {
       const rooms = await dataSource
-        .getRepository(Room)
-        .createQueryBuilder('room')
-        .leftJoinAndSelect('room.calendarItems', 'calendarItems')
+        .getRepository(CalendarItems)
+        .createQueryBuilder('calendarItems')
+        .leftJoinAndSelect('calendarItems.room', 'room')
         .where('calendarItems.timeStart NOT BETWEEN :timeStart AND :timeEnd', { timeStart, timeEnd })
         .andWhere('calendarItems.timeEnd NOT BETWEEN :timeStart AND :timeEnd', { timeStart, timeEnd })
         .orWhere('calendarItems.timeStart IS NULL AND calendarItems.timeEnd IS NULL')
